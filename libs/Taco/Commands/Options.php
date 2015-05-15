@@ -29,7 +29,7 @@ class Options
 	 */
 	function getOption($name, $default = Null)
 	{
-		if ($this->options[$name]) {
+		if (isset($this->options[$name])) {
 			return $this->options[$name];
 		}
 
@@ -37,7 +37,7 @@ class Options
 			return $default;
 		}
 
-		if ($this->defaults[$name]) {
+		if (isset($this->defaults[$name])) {
 			return $this->defaults[$name];
 		}
 

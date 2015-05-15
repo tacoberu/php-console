@@ -5,3 +5,7 @@ services:
 	# commandy
 	command.hello:
 		class: Taco\Commands\HelloCommand
+	command.help:
+		class: Taco\Commands\HelpCommand
+	command.version:
+		class: Taco\Commands\VersionCommand

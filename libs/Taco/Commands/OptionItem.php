@@ -52,6 +52,12 @@ class OptionItem
 	}
 
 
+	function getDescription()
+	{
+		return $this->description;
+	}
+
+
 	function getDefaultValue()
 	{
 		return $this->defaultValue;
@@ -74,6 +80,10 @@ class OptionItem
  */
 class FlagOptionItem extends OptionItem
 {
+	function getType()
+	{
+		return '-';
+	}
 }
 
 
@@ -99,11 +109,20 @@ class ConstraintOptionItem extends OptionItem
 	}
 
 
+	function getType()
+	{
+		return $this->type->getName();
+	}
+
 }
 
 
 class TextOptionItem extends OptionItem
 {
+	function getType()
+	{
+		return 'text';
+	}
 }
 
 
@@ -113,6 +132,11 @@ class IntOptionItem extends OptionItem
 	{
 		return (int)$val;
 	}
+
+	function getType()
+	{
+		return 'int';
+	}
 }
 
 
@@ -121,6 +145,10 @@ class FloatOptionItem extends OptionItem
 	function parse($val)
 	{
 		return (float)$val;
+	}
+	function getType()
+	{
+		return 'float';
 	}
 }
 
@@ -143,5 +171,9 @@ class BoolOptionItem extends OptionItem
 			case '1':
 				return True;
 		}
+	}
+	function getType()
+	{
+		return 'bool';
 	}
 }
