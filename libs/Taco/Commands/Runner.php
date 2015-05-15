@@ -15,6 +15,23 @@ use Exception,
 class Runner
 {
 
+	private $tempDir;
+
+
+	private $appconfigFile;
+
+
+	/**
+	 * @param string $appconfig Soubor obsahující definici služeb a akcí.
+	 * @param string $tempDir Cesta k úložišti dočasných souborů.
+	 */
+	function __construct($appconfigFile, $tempDir)
+	{
+		$this->appconfigFile = $appconfigFile;
+		$this->tempDir = $tempDir;
+	}
+
+
 
 	function run()
 	{
@@ -55,11 +72,11 @@ class Runner
 
 
 
-	private function createContainer($request)
+	private function createContainer()
 	{
 		$configurator = new Nette\Configurator;
-		$configurator->setTempDirectory($request->pwd . '/temp');
-		$configurator->addConfig($request->pwd . '/config.neon');
+		$configurator->setTempDirectory($this->tempDir);
+		$configurator->addConfig($this->appconfigFile);
 		return $configurator->createContainer();
 	}
 

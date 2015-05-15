@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright (c) 2004, 2015 Martin Takáč
+ * @author     Martin Takáč <taco@taco-beru.name>
+ */
+
+require __dir__ . '/../libs/bootstrap.php';
+
+use Taco\Commands\Runner;
+
+$app = new Runner(__dir__ . '/config.neon', __dir__ . '/../temp');
+$app->run();
