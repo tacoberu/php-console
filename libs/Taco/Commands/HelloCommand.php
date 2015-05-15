@@ -49,6 +49,7 @@ class HelloCommand implements Command
 
 	/**
 	 * Definice pro nutné nastavení.
+	 * @return OptionSignature
 	 */
 	function getOptionSignature()
 	{

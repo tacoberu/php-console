@@ -1,0 +1,7 @@
+services:
+	# služby
+	- Taco\Commands\Output
+
+	# commandy
+	command.hello:
+		class: Taco\Commands\HelloCommand

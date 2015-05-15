@@ -15,7 +15,7 @@ class Output
 
 	function notice($content)
 	{
-		echo $content;
+		echo $content . PHP_EOL;
 	}
 
 }
