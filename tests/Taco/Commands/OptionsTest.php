@@ -14,7 +14,6 @@ require_once __dir__ . '/../../../libs/Taco/Commands/Types.php';
 require_once __dir__ . '/../../../libs/Taco/Commands/Options.php';
 require_once __dir__ . '/../../../libs/Taco/Commands/OptionItem.php';
 require_once __dir__ . '/../../../libs/Taco/Commands/OptionSignature.php';
-require_once __dir__ . '/../../../libs/Taco/Commands/HelloCommand.php';
 
 
 use PHPUnit_Framework_TestCase;
@@ -38,11 +37,11 @@ class OptionsTest extends PHPUnit_Framework_TestCase
 		$sign->addArgument('sex', $sign::TYPE_ENUM('male', 'female'), 'Muž či žena?');
 
 		$args = array(
-				'name', 'Martin',
-				'age', '42',
-				'flt', '4.2',
-				'title', 'pan',
-				'sex', 'male',
+				'--name', 'Martin',
+				'--age', '42',
+				'--flt', '4.2',
+				'--title', 'pan',
+				'--sex', 'male',
 				);
 		$options = Options::fromArray($args, $sign);
 		$this->assertSame('Martin', $options->getOption('name'));
@@ -54,21 +53,17 @@ class OptionsTest extends PHPUnit_Framework_TestCase
 
 
 
-	function testFromArrayWithMark()
+	function testFromArrayWithoutMark()
 	{
+		$this->setExpectedException('InvalidArgumentException', "Option `age' has invalid format. Must be prefixed of `--'.");
+
 		$sign = new OptionSignature();
 		$sign->addArgument('name', $sign::TYPE_TEXT, 'Jméno koho pozdravím.');
 		$sign->addArgument('age', $sign::TYPE_INT, 'Věk koho pozdravím.');
-		$sign->addArgument('flt', $sign::TYPE_FLOAT, 'Číslo s desetinou tečkou.');
-		$sign->addOption('title', 'sir', $sign::TYPE_TEXT, 'Má titul?');
-		$sign->addArgument('sex', $sign::TYPE_ENUM('male', 'female'), 'Muž či žena?');
 
 		$args = array(
-				'name', 'Martin',
+				'--name', 'Martin',
 				'age', '42',
-				'flt', '4.2',
-				'--title', 'pan',
-				'sex', 'male',
 				);
 		$options = Options::fromArray($args, $sign);
 		$this->assertSame('Martin', $options->getOption('name'));
@@ -82,15 +77,15 @@ class OptionsTest extends PHPUnit_Framework_TestCase
 
 	function testFromArrayFailBecauseUnknowOption()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Option `age' not found.");
+		$this->setExpectedException('InvalidArgumentException', "Option `--age' not found.");
 
 		$sign = new OptionSignature();
 		$sign->addArgument('name', $sign::TYPE_TEXT, 'Jméno koho pozdravím.');
 
 		$args = array(
-				'name', 'Martin',
-				'age', '42',
-				'title', 'pan',
+				'--name', 'Martin',
+				'--age', '42',
+				'--title', 'pan',
 				);
 		Options::fromArray($args, $sign);
 	}
