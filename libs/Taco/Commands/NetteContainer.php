@@ -8,10 +8,11 @@ namespace Taco\Commands;
 
 
 use Nette;
+use RuntimeException;
 
 
 /**
- * ...
+ * Kontainer založený na Netťáckým DI kontaineru. Tudíž vyžaduje temp a config.neon.
  */
 class NetteContainer implements Container
 {
@@ -85,6 +86,12 @@ class NetteContainer implements Container
 
 	private function createContainer()
 	{
+		// existence uloženého adresáře
+		if (!is_writable($this->tempDir)) {
+			throw new RuntimeException("Directory `$this->tempDir' is missing or is not writable.");
+		}
+
+		// existence konfiguračního souboru
 		$configurator = new Nette\Configurator;
 		$configurator->setTempDirectory($this->tempDir);
 		$configurator->addConfig($this->appconfigFile);
