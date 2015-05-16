@@ -85,9 +85,17 @@ interface Container
 
 
 	/**
+	 * Parser of input arguments.
 	 * @return Parser
 	 */
 	function getParser();
+
+
+	/**
+	 * Generic command as help, version, etc.
+	 * @return OptionSignature
+	 */
+	function getGenericSignature();
 
 }
 

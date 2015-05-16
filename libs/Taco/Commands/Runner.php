@@ -33,7 +33,9 @@ class Runner
 			$output = $this->container->getOutput();
 			$request = $this->parseFromEnv($GLOBALS);
 			$command = $this->dispatchCommand($request);
-			$options = Options::fromArray($request->getArguments(), self::assertType('Taco\Commands\OptionSignature', $command->getOptionSignature()));
+			$signature = self::assertType('Taco\Commands\OptionSignature', $command->getOptionSignature());
+			$signature = $this->mergeWithGenericSignature($signature);
+			$options = Options::fromArray($request->getArguments(), $signature);
 			return $command->execute($options);
 		}
 		catch (Exception $e) {
@@ -73,6 +75,14 @@ class Runner
 		}
 
 		return $this->container->getCommand($request->getCommand());
+	}
+
+
+
+	private function mergeWithGenericSignature(OptionSignature $with)
+	{
+		$base = $this->container->getGenericSignature();
+		return $base->merge($with);
 	}
 
 

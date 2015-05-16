@@ -111,6 +111,16 @@ class OptionSignature
 
 
 
+	function merge(self $with)
+	{
+		foreach ($with->options as $option) {
+			$this->options[$option->getName()] = $option;
+		}
+		return $this;
+	}
+
+
+
 	// -- PRIVATE ------------------------------------------------------
 
 
