@@ -42,7 +42,11 @@ http://etopian.com/software/php-cli-framework/
 9.	Načítání configurace ze souboru +globální pro uživatele +globální pro systém
 10.	Výstupy v různých formátech.
 11.	Načítání stdin.
-12. Volitelná hlučnost. Logování do vícero zdrojů s různou hlučností.
+12.	Volitelná hlučnost. Logování do vícero zdrojů s různou hlučností.
+11.	Lokalization
+12.	Akce helper: Vícero autorů.
+13.	Akce helper: Zarovnávání akcí a parametrů.
+
 
 
 # Changelog

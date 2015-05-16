@@ -72,6 +72,32 @@ interface Container
 {
 
 	/**
+	 * Name of application.
+	 * @return string
+	 */
+	function getApplicationName();
+
+
+	/**
+	 * Description of application.
+	 * @return string
+	 */
+	function getApplicationDescription();
+
+
+	/**
+	 * @return string
+	 */
+	function getAuthor();
+
+
+	/**
+	 * @return string
+	 */
+	function getAuthorEmail();
+
+
+	/**
 	 * @param string $name Name of command.
 	 * @return Command with all dependencies.
 	 */

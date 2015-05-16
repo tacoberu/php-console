@@ -27,6 +27,11 @@ class Runner
 
 
 
+	/**
+	 * Hodnoty prostředí. Takže typicky z GLOBALS, nebo cokoliv, co umí
+	 * zpracovat nakonfigurovanej parser, viz: Container::getParser().
+	 * @param array
+	 */
 	function run(array $env)
 	{
 		try {

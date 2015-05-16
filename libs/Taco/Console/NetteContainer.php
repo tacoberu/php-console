@@ -7,7 +7,8 @@
 namespace Taco\Console;
 
 
-use Nette;
+use Nette,
+	Nette\Utils\Strings;
 use RuntimeException;
 
 
@@ -32,6 +33,55 @@ class NetteContainer implements Container
 		$this->tempDir = $tempDir;
 	}
 
+
+
+	/**
+	 * Name of application.
+	 * @return string
+	 */
+	function getApplicationName()
+	{
+		$name = isset($this->getContainer()->parameters['appname'])
+			? $this->getContainer()->parameters['appname']
+			: 'appname';
+		return Strings::webalize($name);
+	}
+
+
+
+	/**
+	 * Description of application.
+	 * @return string
+	 */
+	function getApplicationDescription()
+	{
+		return isset($this->getContainer()->parameters['appdescription'])
+			? $this->getContainer()->parameters['appdescription']
+			: Null;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	function getAuthor()
+	{
+		return isset($this->getContainer()->parameters['author'])
+			? $this->getContainer()->parameters['author']
+			: 'Unknow';
+	}
+
+
+	/**
+	 * @return string
+	 */
+	function getAuthorEmail()
+	{
+		return isset($this->getContainer()->parameters['email'])
+			? $this->getContainer()->parameters['email']
+			: 'Unknow';
+	}
 
 
 	/**

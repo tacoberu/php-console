@@ -73,19 +73,24 @@ class HelpCommand implements Command
 			$commands[] = $this->formatCommand($command);
 		}
 
-		$this->output->notice("Ukázková aplikace pro runner
+		if ($desc = $this->container->getApplicationDescription()) {
+			$desc = "\n{$desc}\n";
+		}
 
-Runtime z composeru, vytvoření jen vlastních commandů a nette DI pro kompozici služeb.
-
-Použití:
-  appname <command> [--options...]
-
-Příkazy:
-" . implode(PHP_EOL, $commands) . "
-
-Autor:
-  Martin Takáč <martin@takac.name>
-");
+		$this->output->notice(strtr("%{appname} version: %{version}\n"
+				. "%{appdescription}"
+				. "\nUsage:\n  %{appname} <command> [--options...]\n"
+				. "\nGlobal options:\n  --working-dir (-d)    If specified, use the given directory as working directory.\n"
+				. "\nAvailable commands:\n%{available-commands}\n"
+				. "\nAuthor:\n  %{author-name} <%{author-email}>",
+				array(
+			'%{appname}' => $this->container->getApplicationName(),
+			'%{appdescription}' => $desc,
+			'%{version}' => $this->container->getVersion(),
+			'%{author-name}' => $this->container->getAuthor(),
+			'%{author-email}' => $this->container->getAuthorEmail(),
+			'%{available-commands}' => implode(PHP_EOL, $commands),
+			)));
 	}
 
 
