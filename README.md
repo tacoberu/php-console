@@ -32,7 +32,6 @@ http://etopian.com/software/php-cli-framework/
 
 
 # TODO
-1.	Nevynucovat akci, ale jak? Subpříkazy? command1:command2:command3, com1 com2 com3
 2.	Krátké verze příkazů.
 3.	Barvičky.
 4.	Validace typů. Ale zase to nepřehánět. Typ datum.
@@ -46,8 +45,12 @@ http://etopian.com/software/php-cli-framework/
 11.	Lokalization
 12.	Akce helper: Vícero autorů.
 13.	Akce helper: Zarovnávání akcí a parametrů.
+14. Konflikty mezi akcemi a jejich parametry. Například aby dva parametry jedné akce neměli stejný krátký název, nebo aby nekolidoval s jiným názvem.
+15.	Symfony má pěknou funkčnost, kdy našeptává u překlepů.
+16.	Subpříkazy? command1:command2:command3, com1 com2 com3
 
 
 
 # Changelog
 5.	Default command help, default command version.
+1.	Nevynucovat akci, ale jak?
