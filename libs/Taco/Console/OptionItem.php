@@ -29,9 +29,15 @@ class OptionItem
 
 
 	/**
-	 * Defaultní hodnota-
+	 * Defaultní hodnota.
 	 */
 	private $defaultValue;
+
+
+	/**
+	 * Obsahuje defaultní hodnotu? Může být i NULL, nebo False.
+	 */
+	private $useDefaultValue = False;
 
 
 	function __construct($name, $description)
@@ -45,6 +51,7 @@ class OptionItem
 	function setDefaultValue($text)
 	{
 		$this->defaultValue = $text;
+		$this->useDefaultValue = True;
 		return $this;
 	}
 
@@ -58,6 +65,12 @@ class OptionItem
 	function getDescription()
 	{
 		return $this->description;
+	}
+
+
+	function hasDefaultValue()
+	{
+		return $this->useDefaultValue;
 	}
 
 

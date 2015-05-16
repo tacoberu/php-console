@@ -20,7 +20,7 @@ class Runner
 	/**
 	 * @param Container $container
 	 */
-	function __construct($container)
+	function __construct(Container $container)
 	{
 		$this->container = $container;
 	}

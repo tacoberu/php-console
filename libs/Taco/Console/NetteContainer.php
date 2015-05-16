@@ -97,6 +97,7 @@ class NetteContainer implements Container
 				case 'help':
 					return $this->getHelpCommand();
 				default:
+					$name = strtr($name, ':', '_');
 					return $this->getContainer()->getService("command.{$name}");
 			}
 		}

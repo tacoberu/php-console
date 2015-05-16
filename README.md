@@ -46,14 +46,19 @@ http://etopian.com/software/php-cli-framework/
 13.	Akce helper: Zarovnávání akcí a parametrů.
 14. Konflikty mezi akcemi a jejich parametry. Například aby dva parametry jedné akce neměli stejný krátký název, nebo aby nekolidoval s jiným názvem.
 15.	Symfony má pěknou funkčnost, kdy našeptává u překlepů.
-16.	Subpříkazy? command1:command2:command3, com1 com2 com3
 17.	Typ datum.
 18.	Porovnání s Nette
 19.	Porovnání s Symfony
 20.	Working directory. Globální optiony.
+21:	Odstranění povinného pojmenovávání v config.neon-u.
+	Vypadá to, že to nebude sranda. Ona je ten command zaregistrovanej pod
+	náhodným jménem, a aby se to jméno získalo, tak se musí vytvořit instance,
+	včetně všech závislostí. Což znamená, že pro každý request se vygeneruje
+	kompletní graf. Možná by to nevadilo, ale nebudu to nyní řešit.
 
 
 # Changelog
 5.	Default command help, default command version.
 1.	Nevynucovat akci, ale jak?
 4.	Validace typů. Ale zase to nepřehánět.
+16.	Subpříkazy? command1:command2:command3, com1 com2 com3

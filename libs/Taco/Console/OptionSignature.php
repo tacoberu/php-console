@@ -104,9 +104,11 @@ class OptionSignature
 	{
 		$xs = array();
 		foreach ($this->options as $opt) {
-			$xs[$opt->getName()] = $opt->getDefaultValue();
+			if ($opt->hasDefaultValue()) {
+				$xs[$opt->getName()] = $opt->getDefaultValue();
+			}
 		}
-		return array_filter($xs);
+		return $xs;
 	}
 
 
