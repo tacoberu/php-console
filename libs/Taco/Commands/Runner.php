@@ -31,9 +31,9 @@ class Runner
 	{
 		try {
 			$output = $this->container->getOutput();
-			$request = RequestParser::fromEnv($GLOBALS);
+			$request = $this->parseFromEnv($GLOBALS);
 			$command = $this->dispatchCommand($request);
-			$options = Options::fromArray($request->args, self::assertType('Taco\Commands\OptionSignature', $command->getOptionSignature()));
+			$options = Options::fromArray($request->getArguments(), self::assertType('Taco\Commands\OptionSignature', $command->getOptionSignature()));
 			return $command->execute($options);
 		}
 		catch (Exception $e) {
@@ -53,17 +53,26 @@ class Runner
 
 
 
+	private function parseFromEnv(array $xs)
+	{
+		$parser = $this->container->getParser();
+		$request = $parser->parse($xs);
+		return $request;
+	}
+
+
+
 	/**
 	 * Výběr akcí.
 	 * @return Command
 	 */
 	private function dispatchCommand($request)
 	{
-		if (empty($request->command)) {
+		if (! $request->hasCommand()) {
 			throw new RuntimeException("Not used command name. Try the command `help' to list all options.", 1);
 		}
 
-		return $this->container->getCommand($request->command);
+		return $this->container->getCommand($request->getCommand());
 	}
 
 

@@ -10,22 +10,17 @@ namespace Taco\Commands;
 use InvalidArgumentException;
 
 
-class RequestParser
+class RequestEnvParser implements RequestParser
 {
 
 
-	static function fromEnv(array $env)
+	function parse(array $env)
 	{
 		$args = self::parseArgs($env);
 		$pwd = self::parsePwd($env);
 		$program = array_shift($args);
 		$command = array_shift($args);
-		return (object) array(
-				'pwd' => $pwd,
-				'program' => $program,
-				'command' => $command,
-				'args' => $args,
-				);
+		return new Request($pwd, $program, $command, $args);
 	}
 
 

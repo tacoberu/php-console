@@ -77,4 +77,28 @@ interface Container
 	 */
 	function getCommand($name);
 
+
+	/**
+	 * @return Output
+	 */
+	function getOutput();
+
+
+	/**
+	 * @return Parser
+	 */
+	function getParser();
+
+}
+
+
+
+interface RequestParser
+{
+
+	/**
+	 * @return ?
+	 */
+	function parse(array $env);
+
 }

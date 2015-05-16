@@ -49,9 +49,22 @@ class NetteContainer implements Container
 
 
 
+	/**
+	 * @return Output
+	 */
 	function getOutput()
 	{
 		return $this->getContainer()->getByType("Taco\Commands\Output", True);
+	}
+
+
+
+	/**
+	 * @return Parser
+	 */
+	function getParser()
+	{
+		return $this->getContainer()->getByType("Taco\Commands\RequestParser", True);
 	}
 
 

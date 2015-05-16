@@ -1,6 +1,7 @@
 services:
 	# služby
 	- Taco\Commands\Output
+	- Taco\Commands\RequestEnvParser
 
 	# commandy
 	command.hello:

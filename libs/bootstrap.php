@@ -8,11 +8,12 @@
 require_once __dir__ . '/../vendor/autoload.php';
 
 require_once __dir__ . '/Taco/Commands/interfaces.php';
-require_once __dir__ . '/Taco/Commands/Output.php';
+require_once __dir__ . '/Taco/Commands/Request.php';
 require_once __dir__ . '/Taco/Commands/Options.php';
 require_once __dir__ . '/Taco/Commands/OptionItem.php';
 require_once __dir__ . '/Taco/Commands/OptionSignature.php';
-require_once __dir__ . '/Taco/Commands/RequestParser.php';
+require_once __dir__ . '/Taco/Commands/RequestEnvParser.php';
+require_once __dir__ . '/Taco/Commands/Output.php';
 require_once __dir__ . '/Taco/Commands/NetteContainer.php';
 require_once __dir__ . '/Taco/Commands/Runner.php';
 
