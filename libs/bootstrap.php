@@ -13,6 +13,7 @@ require_once __dir__ . '/Taco/Commands/Options.php';
 require_once __dir__ . '/Taco/Commands/OptionItem.php';
 require_once __dir__ . '/Taco/Commands/OptionSignature.php';
 require_once __dir__ . '/Taco/Commands/RequestParser.php';
+require_once __dir__ . '/Taco/Commands/NetteContainer.php';
 require_once __dir__ . '/Taco/Commands/Runner.php';
 
 

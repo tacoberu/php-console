@@ -62,3 +62,19 @@ interface TransactiableCommand extends Command
 	 */
 	function rollback();
 }
+
+
+
+/**
+ * Provide services.
+ */
+interface Container
+{
+
+	/**
+	 * @param string $name Name of command.
+	 * @return Command with all dependencies.
+	 */
+	function getCommand($name);
+
+}

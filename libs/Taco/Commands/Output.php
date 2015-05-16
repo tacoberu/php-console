@@ -18,4 +18,10 @@ class Output
 		echo $content . PHP_EOL;
 	}
 
+
+	function error($content)
+	{
+		echo $content . PHP_EOL;
+	}
+
 }

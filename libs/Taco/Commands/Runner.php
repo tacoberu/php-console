@@ -7,7 +7,6 @@
 namespace Taco\Commands;
 
 
-use Nette;
 use Exception,
 	RuntimeException;
 
@@ -15,20 +14,15 @@ use Exception,
 class Runner
 {
 
-	private $tempDir;
-
-
-	private $appconfigFile;
+	private $container;
 
 
 	/**
-	 * @param string $appconfig Soubor obsahující definici služeb a akcí.
-	 * @param string $tempDir Cesta k úložišti dočasných souborů.
+	 * @param Container $container
 	 */
-	function __construct($appconfigFile, $tempDir)
+	function __construct($container)
 	{
-		$this->appconfigFile = $appconfigFile;
-		$this->tempDir = $tempDir;
+		$this->container = $container;
 	}
 
 
@@ -36,15 +30,15 @@ class Runner
 	function run()
 	{
 		try {
+			$output = $this->container->getOutput();
 			$request = RequestParser::fromEnv($GLOBALS);
 			$command = $this->dispatchCommand($request);
 			$options = Options::fromArray($request->args, self::assertType('Taco\Commands\OptionSignature', $command->getOptionSignature()));
 			return $command->execute($options);
 		}
 		catch (Exception $e) {
-			if (isset($protocolResolver, $request)) {
-				$serializer = $protocolResolver->serializerByRequest($request);
-				echo $serializer->formatError($output, $e);
+			if (isset($output)) {
+				$output->error($e->getMessage());
 			}
 			else {
 				echo $e->getMessage() . PHP_EOL;
@@ -55,29 +49,21 @@ class Runner
 
 
 
+	// -- PRIVATE ------------------------------------------------------
+
+
+
 	/**
 	 * Výběr akcí.
 	 * @return Command
 	 */
 	private function dispatchCommand($request)
 	{
-		try {
-			$container = $this->createContainer($request);
-			return $container->getService("command.{$request->command}");
+		if (empty($request->command)) {
+			throw new RuntimeException("Not used command name. Try the command `help' to list all options.", 1);
 		}
-		catch (Nette\DI\MissingServiceException $e) {
-			throw new RuntimeException("Command `{$request->command}' not found.", 100, $e);
-		}
-	}
 
-
-
-	private function createContainer()
-	{
-		$configurator = new Nette\Configurator;
-		$configurator->setTempDirectory($this->tempDir);
-		$configurator->addConfig($this->appconfigFile);
-		return $configurator->createContainer();
+		return $this->container->getCommand($request->command);
 	}
 
 

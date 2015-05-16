@@ -10,7 +10,7 @@ require __dir__ . '/commands/HelloCommand.php';
 require __dir__ . '/commands/HelpCommand.php';
 require __dir__ . '/commands/VersionCommand.php';
 
-use Taco\Commands\Runner;
+use Taco\Commands;
 
-$app = new Runner(__dir__ . '/config.neon', __dir__ . '/../temp');
+$app = new Commands\Runner(new Commands\NetteContainer(__dir__ . '/config.neon', __dir__ . '/../temp'));
 $app->run();
