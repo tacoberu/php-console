@@ -7,6 +7,9 @@
 namespace Taco\Console;
 
 
+use Nette\Utils\Validators;
+
+
 /**
  * Volba, parametr.
  */
@@ -128,28 +131,38 @@ class TextOptionItem extends OptionItem
 
 class IntOptionItem extends OptionItem
 {
+
 	function parse($val)
 	{
+		Validators::assert($val, 'numericint', "`--{$this->getName()}'");
 		return (int)$val;
 	}
+
 
 	function getType()
 	{
 		return 'int';
 	}
+
+
 }
 
 
 class FloatOptionItem extends OptionItem
 {
+
 	function parse($val)
 	{
+		Validators::assert($val, 'numeric', "`--{$this->getName()}'");
 		return (float)$val;
 	}
+
+
 	function getType()
 	{
 		return 'float';
 	}
+
 }
 
 

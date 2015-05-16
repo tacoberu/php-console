@@ -34,7 +34,6 @@ http://etopian.com/software/php-cli-framework/
 # TODO
 2.	Krátké verze příkazů.
 3.	Barvičky.
-4.	Validace typů. Ale zase to nepřehánět. Typ datum.
 6.	Parametr `name value` a parametr `name=value`,
 7.	Kontainer nevyužívající NetteDI.
 8.	Defaultní hodnoty jako callback.
@@ -48,9 +47,13 @@ http://etopian.com/software/php-cli-framework/
 14. Konflikty mezi akcemi a jejich parametry. Například aby dva parametry jedné akce neměli stejný krátký název, nebo aby nekolidoval s jiným názvem.
 15.	Symfony má pěknou funkčnost, kdy našeptává u překlepů.
 16.	Subpříkazy? command1:command2:command3, com1 com2 com3
-
+17.	Typ datum.
+18.	Porovnání s Nette
+19.	Porovnání s Symfony
+20.	Working directory. Globální optiony.
 
 
 # Changelog
 5.	Default command help, default command version.
 1.	Nevynucovat akci, ale jak?
+4.	Validace typů. Ale zase to nepřehánět.
