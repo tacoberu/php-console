@@ -4,7 +4,7 @@
  * @author     Martin Takáč (martin@takac.name)
  */
 
-namespace Taco\Commands;
+namespace Taco\Console;
 
 
 use Exception,
@@ -27,13 +27,13 @@ class Runner
 
 
 
-	function run()
+	function run(array $env)
 	{
 		try {
 			$output = $this->container->getOutput();
-			$request = $this->parseFromEnv($GLOBALS);
+			$request = $this->parseFromEnv($env);
 			$command = $this->dispatchCommand($request);
-			$signature = self::assertType('Taco\Commands\OptionSignature', $command->getOptionSignature());
+			$signature = self::assertType('Taco\Console\OptionSignature', $command->getOptionSignature());
 			$signature = $this->mergeWithGenericSignature($signature);
 			$options = Options::fromArray($request->getArguments(), $signature);
 			return $command->execute($options);
@@ -55,10 +55,13 @@ class Runner
 
 
 
-	private function parseFromEnv(array $xs)
+	/**
+	 * @return Request
+	 */
+	private function parseFromEnv(array $env)
 	{
 		$parser = $this->container->getParser();
-		$request = $parser->parse($xs);
+		$request = $parser->parse($env);
 		return $request;
 	}
 

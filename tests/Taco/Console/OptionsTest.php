@@ -4,16 +4,16 @@
  * @author     Martin Takáč (martin@takac.name)
  */
 
-namespace Taco\Commands;
+namespace Taco\Console;
 
 
 require_once __dir__ . '/../../../vendor/autoload.php';
-require_once __dir__ . '/../../../libs/Taco/Commands/interfaces.php';
-require_once __dir__ . '/../../../libs/Taco/Commands/Output.php';
-require_once __dir__ . '/../../../libs/Taco/Commands/Types.php';
-require_once __dir__ . '/../../../libs/Taco/Commands/Options.php';
-require_once __dir__ . '/../../../libs/Taco/Commands/OptionItem.php';
-require_once __dir__ . '/../../../libs/Taco/Commands/OptionSignature.php';
+require_once __dir__ . '/../../../libs/Taco/Console/interfaces.php';
+require_once __dir__ . '/../../../libs/Taco/Console/Output.php';
+require_once __dir__ . '/../../../libs/Taco/Console/Types.php';
+require_once __dir__ . '/../../../libs/Taco/Console/Options.php';
+require_once __dir__ . '/../../../libs/Taco/Console/OptionItem.php';
+require_once __dir__ . '/../../../libs/Taco/Console/OptionSignature.php';
 
 
 use PHPUnit_Framework_TestCase;

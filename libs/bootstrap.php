@@ -7,15 +7,15 @@
 
 require_once __dir__ . '/../vendor/autoload.php';
 
-require_once __dir__ . '/Taco/Commands/interfaces.php';
-require_once __dir__ . '/Taco/Commands/Request.php';
-require_once __dir__ . '/Taco/Commands/Options.php';
-require_once __dir__ . '/Taco/Commands/OptionItem.php';
-require_once __dir__ . '/Taco/Commands/OptionSignature.php';
-require_once __dir__ . '/Taco/Commands/RequestEnvParser.php';
-require_once __dir__ . '/Taco/Commands/Output.php';
-require_once __dir__ . '/Taco/Commands/NetteContainer.php';
-require_once __dir__ . '/Taco/Commands/Runner.php';
+require_once __dir__ . '/Taco/Console/interfaces.php';
+require_once __dir__ . '/Taco/Console/Request.php';
+require_once __dir__ . '/Taco/Console/Options.php';
+require_once __dir__ . '/Taco/Console/OptionItem.php';
+require_once __dir__ . '/Taco/Console/OptionSignature.php';
+require_once __dir__ . '/Taco/Console/RequestEnvParser.php';
+require_once __dir__ . '/Taco/Console/Output.php';
+require_once __dir__ . '/Taco/Console/NetteContainer.php';
+require_once __dir__ . '/Taco/Console/Runner.php';
 
 
 error_reporting(-1);

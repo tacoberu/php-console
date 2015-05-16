@@ -4,7 +4,7 @@
  * @author     Martin Takáč (martin@takac.name)
  */
 
-namespace Taco\Commands;
+namespace Taco\Console;
 
 
 use Nette;
@@ -41,7 +41,14 @@ class NetteContainer implements Container
 	function getCommand($name)
 	{
 		try {
-			return $this->getContainer()->getService("command.{$name}");
+			switch ($name) {
+				case 'version':
+					return $this->getVersionCommand();
+				case 'help':
+					return $this->getHelpCommand();
+				default:
+					return $this->getContainer()->getService("command.{$name}");
+			}
 		}
 		catch (Nette\DI\MissingServiceException $e) {
 			throw new RuntimeException("Command `{$name}' not found.", 100, $e);
@@ -51,11 +58,31 @@ class NetteContainer implements Container
 
 
 	/**
+	 * Seznam všechn commandů, které jsou k dispozici.
+	 * @return array of Command
+	 */
+	function getCommandList()
+	{
+		$xs = array();
+		$cmd = $this->getCommand('version');
+		$xs[$cmd->getName()] = $cmd;
+		$cmd = $this->getCommand('help');
+		$xs[$cmd->getName()] = $cmd;
+		foreach ($this->container->findByType('Taco\Console\Command') as $name) {
+			$cmd = $this->container->getService($name);
+			$xs[$cmd->getName()] = $cmd;
+		}
+		return $xs;
+	}
+
+
+
+	/**
 	 * @return Output
 	 */
 	function getOutput()
 	{
-		return $this->getContainer()->getByType("Taco\Commands\Output", True);
+		return $this->getContainer()->getByType("Taco\Console\Output", True);
 	}
 
 
@@ -65,7 +92,20 @@ class NetteContainer implements Container
 	 */
 	function getParser()
 	{
-		return $this->getContainer()->getByType("Taco\Commands\RequestParser", True);
+		return $this->getContainer()->getByType("Taco\Console\RequestParser", True);
+	}
+
+
+
+	/**
+	 * Verze aplikace.
+	 * @return string 0.0.1
+	 */
+	function getVersion()
+	{
+		return isset($this->getContainer()->parameters['version'])
+			? $this->getContainer()->parameters['version']
+			: '0.0.1';
 	}
 
 
@@ -110,5 +150,18 @@ class NetteContainer implements Container
 		return $configurator->createContainer();
 	}
 
+
+
+	private function getVersionCommand()
+	{
+		return new VersionCommand($this->getOutput(), $this->getVersion());
+	}
+
+
+
+	private function getHelpCommand()
+	{
+		return new HelpCommand($this->getOutput(), $this);
+	}
 
 }

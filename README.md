@@ -11,7 +11,7 @@ flexible component.
 * Očekávám deklarativní zápis.
 
 # Use
-...
+php-control-examples
 
 
 # Konkurence
@@ -23,14 +23,27 @@ https://github.com/wp-cli/php-cli-tools - to fakt ne
 http://laravel.com/docs/5.0/artisan - Laravel, ?
 https://github.com/b-b3rn4rd/Terminalor - ?
 http://seagullproject.org/ - ? 500
+https://phpconsole.com/ - ?
+http://www.yiiframework.com/extension/php-console/
+http://www.yiiframework.com/doc/guide/1.1/en/topics.console
+https://github.com/barbushin/php-console
+http://framework.zend.com/manual/current/en/modules/zend.console.introduction.html
+http://etopian.com/software/php-cli-framework/
 
 
 # TODO
 1.	Nevynucovat akci, ale jak? Subpříkazy? command1:command2:command3, com1 com2 com3
 2.	Krátké verze příkazů.
-3.	Barvičky
+3.	Barvičky.
 4.	Validace typů. Ale zase to nepřehánět. Typ datum.
-5.	Default command help, default command version.
 6.	Parametr `name value` a parametr `name=value`,
 7.	Kontainer nevyužívající NetteDI.
 8.	Defaultní hodnoty jako callback.
+9.	Načítání configurace ze souboru +globální pro uživatele +globální pro systém
+10.	Výstupy v různých formátech.
+11.	Načítání stdin.
+12. Volitelná hlučnost. Logování do vícero zdrojů s různou hlučností.
+
+
+# Changelog
+5.	Default command help, default command version.

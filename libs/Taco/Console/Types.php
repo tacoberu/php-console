@@ -4,7 +4,7 @@
  * @author     Martin Takáč (martin@takac.name)
  */
 
-namespace Taco\Commands;
+namespace Taco\Console;
 
 
 

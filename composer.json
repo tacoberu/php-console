@@ -1,5 +1,5 @@
 {
-    "name": "tacoberu/php-commands",
+    "name": "tacoberu/php-console",
     "description": "PHP Commands a lightweight framework for creating PHP CLI scripts.",
     "type": "library",
     "require": {

@@ -4,7 +4,7 @@
  * @author     Martin Takáč (martin@takac.name)
  */
 
-namespace Taco\Commands;
+namespace Taco\Console;
 
 
 /**
@@ -79,6 +79,13 @@ interface Container
 
 
 	/**
+	 * Seznam všechn commandů, které jsou k dispozici.
+	 * @return array of Command
+	 */
+	function getCommandList();
+
+
+	/**
 	 * @return Output
 	 */
 	function getOutput();
@@ -96,6 +103,15 @@ interface Container
 	 * @return OptionSignature
 	 */
 	function getGenericSignature();
+
+
+	/**
+	 * Verze aplikace.
+	 * @return string 0.0.1
+	 */
+	function getVersion();
+
+
 
 }
 
