@@ -16,9 +16,15 @@ use InvalidArgumentException;
 class Options
 {
 
+	/**
+	 * volba a hodnota předaná z CLI.
+	 */
 	private $options = array();
 
 
+	/**
+	 * volba a defaultní hodnota získaná z definice.
+	 */
 	private $defaults = array();
 
 
@@ -53,6 +59,8 @@ class Options
 		$inst = new static();
 		$inst->defaults = $signature->getDefaultsValue();
 		while (count($args) && $name = array_shift($args)) {
+			self::assertOptionFormat($name);
+
 			if (! $opt = $signature->getOption($name)) {
 				throw new InvalidArgumentException("Option `$name' not found.");
 			}
@@ -60,6 +68,9 @@ class Options
 				$inst->options[$opt->getName()] = True;
 			}
 			else {
+				if (!count($args)) {
+					throw new InvalidArgumentException("Missing value of option `$name'.");
+				}
 				$inst->options[$opt->getName()] = $opt->parse(array_shift($args));
 			}
 		}
@@ -71,6 +82,16 @@ class Options
 		}
 
 		return $inst;
+	}
+
+
+
+	private static function assertOptionFormat($name)
+	{
+		if (empty($name) || $name{0} != '-' || $name{1} != '-') {
+			throw new InvalidArgumentException("Option `$name' has invalid format. Must be prefixed of `--'.");
+		}
+		return $name;
 	}
 
 }
