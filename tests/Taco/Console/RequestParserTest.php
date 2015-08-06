@@ -8,7 +8,6 @@ namespace Taco\Console;
 
 
 require_once __dir__ . '/../../../vendor/autoload.php';
-require_once __dir__ . '/../../../libs/Taco/Console/RequestX.php';
 
 
 use PHPUnit_Framework_TestCase;
@@ -16,125 +15,198 @@ use PHPUnit_Framework_TestCase;
 
 
 /**
+ * Argument je buď poziční, a pak může ale nemusí být jmenován, ale musí být uvést.
+ * Argument je volitelný, ale není poziční. Pak musí být uvdene jménem.
+ *
+ * - Volitelný parametru: musí být určen jménem. Nepodílí se na pořadí. Musí mět defaultní hodnotu.
+ * - Poziční parametr s defaultní hodnotou: Musí být až jako na konec.
+ * - Poziční parametr povinný: Určuje jméno.
+ *
  * @call phpunit OptionsTest.php
  */
 class RequestParserTest extends PHPUnit_Framework_TestCase
 {
 
 
-	function _testPositionalArgument()
+	function testEmptyWithDefault()
+	{
+		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
+		$req = new Request('foo');
+
+		// Data může zvalidovat
+		$sig = new OptionSignature();
+		$sig->addOption('working-dir', $sig::TYPE_TEXT, '.', '...');
+		$sig->addArgumentDefault('task', $sig::TYPE_TEXT, 'run', '...');
+
+		$req->applyRules($sig);
+		$this->assertFalse($req->isMissingRules());
+
+		$this->assertEquals([
+				'working-dir' => '.',
+				'task' => 'run'
+				], $req->getOptions());
+	}
+
+
+
+	function testUne()
 	{
 		$raw1 = array(
 				'help',
-				'commit',
-				'--name', 'Martin',
-				'--working-dir', '../..',
-				'--age', '42',
 				);
 
 		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
-		$req = new RequestX();
+		$req = new Request('foo');
 
 		$req->addRawData($raw1);
 
 		// Data může zvalidovat
-		$req->applyRules($this->getOptionSignatureFor('generic-with-pos'));
+		$sig = new OptionSignature();
+		$sig->addOption('working-dir', $sig::TYPE_TEXT, '.', '...');
+		$sig->addArgumentDefault('task', $sig::TYPE_TEXT, 'run', '...');
+
+		$req->applyRules($sig);
+		$this->assertFalse($req->isMissingRules());
+
+		$this->assertEquals([
+				'task' => 'help',
+				'working-dir' => '.',
+				], $req->getOptions());
+	}
+
+
+
+	function testOverideDefaultValue()
+	{
+		$raw1 = array(
+				'help',
+				'--working-dir', '../..',
+				);
+
+		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
+		$req = new Request('foo');
+
+		$req->addRawData($raw1);
+
+		// Data může zvalidovat
+		$req->applyRules($this->getOptionSignatureFor('default-task'));
+		$this->assertFalse($req->isMissingRules());
+
+		$this->assertEquals([
+				'task' => 'help',
+				'working-dir' => '../..',
+				], $req->getOptions());
+	}
+
+
+
+	function testIncrementalSetting()
+	{
+		$raw1 = array(
+				'commit', // 1
+				'--message', 'Lorem ipsum doler ist', // 3
+				'ref-branche-name', // 2
+				'--working-dir', '../..', // mimo pořadí
+				'--version', '42', // mimo pořadí
+				);
+
+		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
+		$req = new Request('foo');
+
+		$req->addRawData($raw1);
+
+		// Data může zvalidovat
+		$sig = new OptionSignature();
+		$sig->addOption('working-dir', $sig::TYPE_TEXT, '.', '...');
+		$sig->addArgumentDefault('task', $sig::TYPE_TEXT, 'run', '...');
+		$req->applyRules($sig);
 		$this->assertTrue($req->isMissingRules());
 
 		// Když už máme data nějak poskládaná, jsme schopni zjistit základní první informace.
 		// Jméno akce je například před lokálními optiony. Globální můou být i za ní.
 		// Jenže ty jsou už vyzobaný.
-		$this->assertTrue($req->hasCommandName());
-		$this->assertEquals('help', $req->getCommandName());
+		$this->assertNotNull($req->getOption('task'));
+		$this->assertEquals('commit', $req->getOption('task'));
 
 		// Máme-li název commandu, jsme schopni zjistit jeho specielní nastavení
-		//~ $cmdinst = $repo->getCommand($cmd);
-		//~ $cmdRules = $cmdinst->getOptionSignature();
-		$cmdRules = $this->getOptionSignatureFor($req->getCommandName());
+		// a to přiřadit do Requestu ke zpracování.
+		$cmdRules = $this->getOptionSignatureFor($req->getOption('task'));
 
 		// To opět můžeme použít pro validaci vstupních dat.
 		$req->applyRules($cmdRules);
-
-
-
-
-print_r($req);
-die('=====[' . __line__ . '] ' . __file__);
 
 		// Nyní už máme kompletně zvalidovaná data.
 		$this->assertFalse($req->isMissingRules());
 
 		$this->assertEquals(array(
 			'working-dir' => '../..',
-			'name' => 'Martin',
-			'age' => 42,
+			'task' => 'commit',
+			'ref' => 'ref-branche-name',
+			'message' => 'Lorem ipsum doler ist',
+			'version' => 42,
 		), $req->getOptions());
 	}
 
 
 
-	function t_estPositionalArgument()
+	/**
+	 * Přeskládat parametry.
+	 * Klasika na příkladu funkce join
+	 * def join(first, second, separator)
+	 */
+	function testPositionalArgument()
 	{
-		$req = new RequestX();
+		$req = new Request('foo');
 		$req->addRawData(array(
-				'help',
-				'--name', 'Martin',
-				'--working-dir', '../..',
-				'--age', '42',
+				'John',
+				'Dee',
+				'--sep', ':',
 				));
-		$req->applyRules($this->getOptionSignatureFor('generic-with-pos'));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('first', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('second', $sig::TYPE_TEXT, '...');
+		$sig->addArgumentDefault('sep', $sig::TYPE_TEXT, '*', '...');
+
+		$req->applyRules($sig);
+
+		$this->assertEquals([
+				'first' => 'John',
+				'second' => 'Dee',
+				'sep' => ':',
+				], $req->getOptions());
 	}
 
 
 
 	/**
-	 * Chceme načísto soubor, ve kterém jsou teprve definice akcí.
+	 * Přeskládat parametry.
+	 * Klasika na příkladu funkce join
+	 * def join(first, second, separator)
 	 */
-	function testConfigFile()
+	function testPositionalArgument2()
 	{
-		$raw1 = array(
-				'help',
-				'--config', 'soubor.cfg',
-				'--name', 'Martin',
-				'--working-dir', '../..',
-				'--age', '42',
-				);
-		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
-		$req = new RequestX();
-		$req->addRawData($raw1);
+		$req = new Request('foo');
+		$req->addRawData(array(
+				'John',
+				'--sep', ':',
+				'Dee',
+				));
 
-		// Data může zvalidovat
-		$req->applyRules($this->getOptionSignatureFor('generic-with-config'));
+		$sig = new OptionSignature();
+		$sig->addArgument('first', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('second', $sig::TYPE_TEXT, '...');
+		$sig->addArgumentDefault('sep', $sig::TYPE_TEXT, '*', '...');
 
-		$this->assertEquals('soubor.cfg', $req->getOption('config'));
-		// Nyní můžeme použít jméno souboru, načíst z něj definice a použít jej pro vytvoření dalších signatur.
+		$req->applyRules($sig);
+
+		$this->assertEquals([
+				'first' => 'John',
+				'second' => 'Dee',
+				'sep' => ':',
+				], $req->getOptions());
 	}
 
-
-
-	/**
-	 * Někdy prostě nemáme uvedenou žádnou akci. A chceme použít defaultní
-	 * a k té defaultní se vztahují právě ty uvedené nastavení.
-	 */
-	function testDefaultAction()
-	{
-		$raw1 = array(
-				'--name', 'Martin', // action option
-				'--working-dir', '../..', // global option
-				'--age', '42', // action option
-				);
-		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
-		$req = new RequestX();
-		$req->addRawData($raw1);
-
-		// Data může zvalidovat
-		$req->applyRules($this->getOptionSignatureFor('generic'));
-
-		// Zde jsme přesvědčení, že už tam musí být akce. Pokud není, tak se rozhodnem pro defaultní.
-		$this->assertFalse($req->hasCommandName());
-		$req->setCommandName('help');
-		$this->assertEquals('help', $req->getCommandName());
-	}
 
 
 
@@ -145,24 +217,30 @@ die('=====[' . __line__ . '] ' . __file__);
 	private function getOptionSignatureFor($name = Null)
 	{
 		switch ($name) {
-			case 'help':
+			case 'commit':
 				$sig = new OptionSignature();
-				$sig->addArgument('name', $sig::TYPE_TEXT, '');
-				$sig->addArgument('age', $sig::TYPE_INT, '');
+				$sig->addOption('version', $sig::TYPE_INT, '0', '... taky by mohl být rozlišeno s hodnotu a bez hodnoty.');
+				$sig->addArgument('ref', $sig::TYPE_TEXT, '...');
+				$sig->addArgument('message', $sig::TYPE_TEXT, '...');
+				return $sig;
+			case 'person':
+				$sig = new OptionSignature();
+				$sig->addArgument('name', $sig::TYPE_TEXT, '...');
+				$sig->addArgument('age', $sig::TYPE_INT, '...');
 				return $sig;
 			case 'generic-with-config':
 				$sig = new OptionSignature();
 				$sig->addArgument('working-dir', $sig::TYPE_TEXT, 'Jméno koho pozdravím.');
 				$sig->addArgument('config', $sig::TYPE_TEXT, 'Jméno koho pozdravím.');
 				return $sig;
-			case 'generic-with-pos':
+			case 'default-task':
 				$sig = new OptionSignature();
-				$sig->addArgument('working-dir', $sig::TYPE_TEXT, 'Jméno koho pozdravím.');
-				$sig->addPositional('action', $sig::TYPE_TEXT, '...');
+				$sig->addOption('working-dir', $sig::TYPE_TEXT, '.', 'Cesta k pracovnímu adresáři.');
+				$sig->addArgumentDefault('task', $sig::TYPE_TEXT, 'run', '...');
 				return $sig;
 			default:
 				$sig = new OptionSignature();
-				$sig->addArgument('working-dir', $sig::TYPE_TEXT, 'Jméno koho pozdravím.');
+				$sig->addOption('working-dir', $sig::TYPE_TEXT, '.', 'Cesta k pracovnímu adresáři.');
 				return $sig;
 		}
 	}
