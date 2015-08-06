@@ -13,7 +13,7 @@ use Nette\Utils\Validators;
 /**
  * Volba, parametr. Napříklda `--name Name`.
  */
-class OptionItem
+abstract class OptionItem
 {
 
 	/**

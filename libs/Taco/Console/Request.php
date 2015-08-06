@@ -164,9 +164,27 @@ class Request
 		if (! $this->isFilled()) {
 			$xs = array_diff($this->signature->getOptionNames(),
 					array_keys($this->args));
-			throw new RuntimeException("Options `" . implode(',', $xs) . "' is not set and are required.");
+			$res = [];
+			foreach ($xs as $x) {
+				$res[] = self::formatOption($this->signature->getOption($x));
+			}
+			throw new RuntimeException("Missing required options:\n" . implode("\n", $res) . "");
 		}
 		return new Options($this->args);
+	}
+
+
+
+	/**
+	 * @return bool
+	 */
+	private static function formatOption(OptionItem $opt)
+	{
+		return "  --{$opt->getName()}"
+			. ($opt->getShortname() ? ", -{$opt->getShortname()}" : Null)
+			. "  [{$opt->getType()}]"
+			. "  {$opt->getDescription()}"
+			;
 	}
 
 

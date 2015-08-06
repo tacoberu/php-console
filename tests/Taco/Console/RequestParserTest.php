@@ -239,7 +239,7 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 	 */
 	function testIsFilled()
 	{
-		$this->setExpectedException('RuntimeException', "Options `name' is not set and are required.");
+		$this->setExpectedException('RuntimeException', "Missing required options:\n  --name  [text]  ...");
 
 		$req = new Request('app');
 		$req->addRawData(array(
