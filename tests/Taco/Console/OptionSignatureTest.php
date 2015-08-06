@@ -8,7 +8,6 @@ namespace Taco\Console;
 
 
 require_once __dir__ . '/../../../vendor/autoload.php';
-require_once __dir__ . '/../../../libs/Taco/Console/RequestX.php';
 
 
 use PHPUnit_Framework_TestCase;
@@ -139,8 +138,8 @@ class OptionSignatureTest extends PHPUnit_Framework_TestCase
 
 		$b = new OptionSignature();
 		$b->addArgument('b1', $b::TYPE_TEXT, '..');
-		$b->addArgumentDefault('b2', $b::TYPE_INT, 42, '..');
-		$b->addOption('b3', $b::TYPE_TEXT, 'config.ini', '...');
+		$b->addArgumentDefault('b2|x', $b::TYPE_INT, 42, '..');
+		$b->addOption('b3|y', $b::TYPE_TEXT, 'config.ini', '...');
 
 		$a->merge($b);
 		$this->assertEquals(array('a1', 'a2', 'b1', 'b2', 'a3', 'b3'), $a->getOptionNames());
@@ -148,6 +147,8 @@ class OptionSignatureTest extends PHPUnit_Framework_TestCase
 		$this->assertEqualsOption('a2', $a::TYPE_INT, $a->getOptionAt(1));
 		$this->assertEqualsOption('b1', $a::TYPE_TEXT, $a->getOptionAt(2));
 		$this->assertEqualsOption('b2', $a::TYPE_INT, $a->getOptionAt(3));
+		$this->assertEquals('x', $a->getOptionAt(3)->getShortname());
+		$this->assertEquals('y', $a->getOption('b3')->getShortname());
 	}
 
 

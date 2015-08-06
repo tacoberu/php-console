@@ -112,6 +112,7 @@ interface Container
 
 
 	/**
+	 * Zapisování na výstup.
 	 * @return Output
 	 */
 	function getOutput();
@@ -119,9 +120,9 @@ interface Container
 
 	/**
 	 * Parser of input arguments.
-	 * @return Parser
+	 * @return RequestParser
 	 */
-	function getParser();
+	function getRequestParser();
 
 
 	/**
@@ -143,6 +144,9 @@ interface Container
 
 
 
+/**
+ * Zpracování vstupních parametrů.
+ */
 interface RequestParser
 {
 

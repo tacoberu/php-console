@@ -41,10 +41,10 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 		$req->applyRules($sig);
 		$this->assertFalse($req->isMissingRules());
 
-		$this->assertEquals([
+		$this->assertEquals(new Options([
 				'working-dir' => '.',
 				'task' => 'run'
-				], $req->getOptions());
+				]), $req->getOptions());
 	}
 
 
@@ -68,10 +68,10 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 		$req->applyRules($sig);
 		$this->assertFalse($req->isMissingRules());
 
-		$this->assertEquals([
+		$this->assertEquals(new Options([
 				'task' => 'help',
 				'working-dir' => '.',
-				], $req->getOptions());
+				]), $req->getOptions());
 	}
 
 
@@ -92,10 +92,10 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 		$req->applyRules($this->getOptionSignatureFor('default-task'));
 		$this->assertFalse($req->isMissingRules());
 
-		$this->assertEquals([
+		$this->assertEquals(new Options([
 				'task' => 'help',
 				'working-dir' => '../..',
-				], $req->getOptions());
+				]), $req->getOptions());
 	}
 
 
@@ -138,13 +138,13 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 		// Nyní už máme kompletně zvalidovaná data.
 		$this->assertFalse($req->isMissingRules());
 
-		$this->assertEquals(array(
+		$this->assertEquals(new Options([
 			'working-dir' => '../..',
 			'task' => 'commit',
 			'ref' => 'ref-branche-name',
 			'message' => 'Lorem ipsum doler ist',
 			'version' => 42,
-		), $req->getOptions());
+		]), $req->getOptions());
 	}
 
 
@@ -170,11 +170,11 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 
 		$req->applyRules($sig);
 
-		$this->assertEquals([
+		$this->assertEquals(new Options([
 				'first' => 'John',
 				'second' => 'Dee',
 				'sep' => ':',
-				], $req->getOptions());
+				]), $req->getOptions());
 	}
 
 
@@ -200,13 +200,63 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 
 		$req->applyRules($sig);
 
-		$this->assertEquals([
+		$this->assertEquals(new Options([
 				'first' => 'John',
 				'second' => 'Dee',
 				'sep' => ':',
-				], $req->getOptions());
+				]), $req->getOptions());
 	}
 
+
+
+	/**
+	 * Přeskládat parametry.
+	 * app -d ../ddd hello
+	 */
+	function testPositionalArgument3()
+	{
+		$req = new Request('app');
+		$req->addRawData(array(
+				'-d', '../ddd',
+				'hello',
+				));
+
+		$sig = new OptionSignature();
+		$sig->addArgumentDefault('command', $sig::TYPE_TEXT, 'run', '...');
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, '.', '...');
+
+		$req->applyRules($sig);
+		$this->assertEquals(new Options([
+				'command' => "hello",
+				"working-dir" => "../ddd",
+				]), $req->getOptions());
+	}
+
+
+
+	/**
+	 * Ověřit vyplněné parametry.
+	 */
+	function testIsFilled()
+	{
+		$this->setExpectedException('RuntimeException', "Options `name' is not set and are required.");
+
+		$req = new Request('app');
+		$req->addRawData(array(
+				'-d', '../ddd',
+				'hello',
+				));
+
+		$sig = new OptionSignature();
+		$sig->addArgumentDefault('command', $sig::TYPE_TEXT, 'run', '...');
+		$sig->addArgument('name', $sig::TYPE_TEXT, '...');
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, '.', '...');
+		$sig->addArgumentDefault('age', $sig::TYPE_INT, 111, '...');
+
+		$req->applyRules($sig);
+		$this->assertFalse($req->isFilled());
+		$req->getOptions();
+	}
 
 
 

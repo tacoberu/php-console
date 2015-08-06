@@ -15,8 +15,9 @@ class RequestEnvParser implements RequestParser
 
 	private $defaultcommand;
 
+
 	/**
-	 * Závislosti na služby. I výstup je služba-
+	 * Závislosti na služby. I výstup je služba.
 	 */
 	function __construct($defaultcommand = Null)
 	{
@@ -25,23 +26,35 @@ class RequestEnvParser implements RequestParser
 
 
 
+	/**
+	 * @return Request
+	 */
 	function parse(array $env)
 	{
 		$args = self::parseArgs($env);
 		$pwd = self::parsePwd($env);
 		$program = array_shift($args);
 
-		$command = reset($args);
-		if (empty($command) || self::isOption($command)) {
-			$command = $this->defaultcommand;
-		}
-		else {
-			$command = array_shift($args);
-		}
+		$req = new Request($program);
+		$req->addRawData($args);
+		$req->applyRules($this->getDefaultSignature());
 
-		return new Request($pwd, $program, $command, $args);
+		return $req;
 	}
 
+
+
+	private function getDefaultSignature()
+	{
+		$sig = new OptionSignature();
+		if ($this->defaultcommand) {
+			$sig->addArgumentDefault('command', $sig::TYPE_TEXT, $this->defaultcommand, 'command');
+		}
+		else {
+			$sig->addArgument('command', $sig::TYPE_TEXT, 'command');
+		}
+		return $sig;
+	}
 
 
 	private static function parseArgs(array $env)
@@ -63,9 +76,5 @@ class RequestEnvParser implements RequestParser
 	}
 
 
-	private static function isOption($name)
-	{
-		return ($name{0} == '-');
-	}
 
 }

@@ -139,9 +139,9 @@ class NetteContainer implements Container
 
 
 	/**
-	 * @return Parser
+	 * @return RequestParser
 	 */
-	function getParser()
+	function getRequestParser()
 	{
 		return $this->getContainer()->getByType("Taco\Console\RequestParser", True);
 	}
@@ -167,7 +167,7 @@ class NetteContainer implements Container
 	function getGenericSignature()
 	{
 		$sign = new OptionSignature();
-		$sign->addOptional('working-dir', '.', $sign::TYPE_TEXT, 'If specified, use the given directory as working directory.');
+		$sign->addOption('working-dir|d', $sign::TYPE_TEXT, '.', 'If specified, use the given directory as working directory.');
 		return $sign;
 	}
 

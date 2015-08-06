@@ -37,11 +37,10 @@ class Runner
 		try {
 			$output = $this->container->getOutput();
 			$request = $this->parseFromEnv($env);
+			$request->applyRules($this->getGenericSignature());
 			$command = $this->dispatchCommand($request);
-			$signature = self::assertType('Taco\Console\OptionSignature', $command->getOptionSignature());
-			$signature = $this->mergeWithGenericSignature($signature);
-			$options = Options::fromArray($request->getArguments(), $signature);
-			return $command->execute($options);
+			$request->applyRules($command->getOptionSignature());
+			return $command->execute($request->getOptions());
 		}
 		catch (Exception $e) {
 			if (isset($output)) {
@@ -65,7 +64,7 @@ class Runner
 	 */
 	private function parseFromEnv(array $env)
 	{
-		$parser = $this->container->getParser();
+		$parser = $this->container->getRequestParser();
 		$request = $parser->parse($env);
 		return $request;
 	}
@@ -78,19 +77,18 @@ class Runner
 	 */
 	private function dispatchCommand($request)
 	{
-		if (! $request->hasCommand()) {
+		if (! $request->getOption('command')) {
 			throw new RuntimeException("Not used command name. Try the command `help' to list all options.", 1);
 		}
 
-		return $this->container->getCommand($request->getCommand());
+		return $this->container->getCommand($request->getOption('command'));
 	}
 
 
 
-	private function mergeWithGenericSignature(OptionSignature $with)
+	private function getGenericSignature()
 	{
-		$base = $this->container->getGenericSignature();
-		return $base->merge($with);
+		return $this->container->getGenericSignature();
 	}
 
 

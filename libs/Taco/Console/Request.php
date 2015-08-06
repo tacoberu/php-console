@@ -7,7 +7,8 @@
 namespace Taco\Console;
 
 
-use InvalidArgumentException;
+use InvalidArgumentException,
+	RuntimeException;
 
 
 /**
@@ -121,9 +122,26 @@ class Request
 
 
 
+	/**
+	 * Zda jsou uplatněny všechna pravidla.
+	 * @return boolean
+	 */
 	function isMissingRules()
 	{
 		return (bool)count($this->data);
+	}
+
+
+
+	/**
+	 * Zda jsou naplněny všechny povinné prvky.
+	 * @return boolean
+	 */
+	function isFilled()
+	{
+		$xs = array_diff($this->signature->getOptionNames(),
+				array_keys($this->args));
+		return empty($xs);
 	}
 
 
@@ -143,7 +161,12 @@ class Request
 
 	function getOptions()
 	{
-		return $this->args;
+		if (! $this->isFilled()) {
+			$xs = array_diff($this->signature->getOptionNames(),
+					array_keys($this->args));
+			throw new RuntimeException("Options `" . implode(',', $xs) . "' is not set and are required.");
+		}
+		return new Options($this->args);
 	}
 
 
