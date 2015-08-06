@@ -30,10 +30,11 @@ class OptionsTest extends PHPUnit_Framework_TestCase
 	function testFromArray()
 	{
 		$sign = new OptionSignature();
+		#sign->addPosition('name', $sign::TYPE_TEXT, 'Jméno koho pozdravím.')
 		$sign->addArgument('name', $sign::TYPE_TEXT, 'Jméno koho pozdravím.');
 		$sign->addArgument('age', $sign::TYPE_INT, 'Věk koho pozdravím.');
 		$sign->addArgument('flt', $sign::TYPE_FLOAT, 'Číslo s desetinou tečkou.');
-		$sign->addOption('title', 'sir', $sign::TYPE_TEXT, 'Má titul?');
+		$sign->addOptional('title', 'sir', $sign::TYPE_TEXT, 'Má titul?');
 		$sign->addArgument('sex', $sign::TYPE_ENUM('male', 'female'), 'Muž či žena?');
 
 		$args = array(

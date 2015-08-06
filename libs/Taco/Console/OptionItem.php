@@ -11,7 +11,7 @@ use Nette\Utils\Validators;
 
 
 /**
- * Volba, parametr.
+ * Volba, parametr. Napříklda `--name Name`.
  */
 class OptionItem
 {
@@ -20,6 +20,12 @@ class OptionItem
 	 * Jméno volby.
 	 */
 	private $name;
+
+
+	/**
+	 * Zkrácený název
+	 */
+	private $shortname;
 
 
 	/**
@@ -56,10 +62,26 @@ class OptionItem
 	}
 
 
+
+	function setShortname($name)
+	{
+		$this->shortname = $name;
+	}
+
+
+
+	function getShortname()
+	{
+		return $this->shortname;
+	}
+
+
+
 	function getName()
 	{
 		return $this->name;
 	}
+
 
 
 	function getDescription()
@@ -68,10 +90,12 @@ class OptionItem
 	}
 
 
+
 	function hasDefaultValue()
 	{
 		return $this->useDefaultValue;
 	}
+
 
 
 	function getDefaultValue()
@@ -80,12 +104,19 @@ class OptionItem
 	}
 
 
+
 	/**
 	 * Zpracování vstupní hodnoty na sanitovanou. Případně to řve, kdy je blbost.
 	 */
 	function parse($val)
 	{
 		return (string)$val;
+	}
+
+
+	function getValence()
+	{
+		return 1;
 	}
 
 }
@@ -99,6 +130,11 @@ class FlagOptionItem extends OptionItem
 	function getType()
 	{
 		return '-';
+	}
+
+	function getValence()
+	{
+		return 0;
 	}
 }
 

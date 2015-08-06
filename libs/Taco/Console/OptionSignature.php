@@ -18,7 +18,7 @@ class OptionSignature
 {
 
 
-	const TYPE_TEXT = 'string';
+	const TYPE_TEXT = 'text';
 
 
 	const TYPE_INT = 'int';
@@ -42,7 +42,23 @@ class OptionSignature
 	}
 
 
+	/**
+	 * Odkazy na prvky pod jméném.
+	 */
 	private $options = array();
+
+
+	/**
+	 * Odkazy na prvky, pojmenované zkratkou. Například -a -b. Zkratky se dají
+	 * seskupovat, takže -abc se rozpadne na -a -b -c
+	 */
+	private $shortcut = array();
+
+
+	/**
+	 * Odkazy na prvky, které jsou definované pozičně.
+	 */
+	private $positions = array();
 
 
 	/**
@@ -53,7 +69,13 @@ class OptionSignature
 	 */
 	function addArgument($name, $type, $description)
 	{
-		$this->options[$name] = $this->createOptionItemByType($type, $name, $description);
+		$par = explode('|', $name, 2);
+		//~ $this->assertUniqueName($par[0]);
+		$this->options[$par[0]] = $this->createOptionItemByType($type, $par[0], $description);
+		if (isset($par[1])) {
+			$this->options[$par[0]]->setShortname($par[1]);
+			$this->shortcut[$par[1]] = $this->options[$par[0]];
+		}
 		return $this;
 	}
 
@@ -66,10 +88,42 @@ class OptionSignature
 	 * @param mixin Defaultní hodnota.
 	 * @param string Popis.
 	 */
-	function addOption($name, $defaultvalue, $type, $description)
+	function addOptional($name, $defaultvalue, $type, $description)
 	{
-		$this->options[$name] = $this->createOptionItemByType($type, $name, $description)
+		$par = explode('|', $name, 2);
+		//~ $this->assertUniqueName($par[0]);
+		$this->options[$par[0]] = $this->createOptionItemByType($type, $par[0], $description)
 				->setDefaultValue($defaultvalue);
+		if (isset($par[1])) {
+			$this->options[$par[0]]->setShortname($par[1]);
+			$this->shortcut[$par[1]] = $this->options[$par[0]];
+		}
+		return $this;
+	}
+
+
+
+	/**
+	 * Zkratka pro bool optional s defaultem na false.
+	 */
+	function addFlag($name, $description)
+	{
+		//~ $this->assertUniqueName($name);
+		return $this->addOptional($name, False, self::TYPE_BOOL, $description);
+	}
+
+
+
+	/**
+	 * Poziční jsou sice mimo klasické argumenty, ale všechna jména jsou v
+	 * rámci signatury jedinečná.
+	 */
+	function addPositional($name, $type, $description)
+	{
+		//~ $this->assertUniqueName($name);
+		$index = count($this->positions);
+		$this->positions[] = $this->createOptionItemByType($type, $name, $description);
+		$this->options[$name] = $index;
 		return $this;
 	}
 
@@ -82,9 +136,36 @@ class OptionSignature
 	function getOption($name)
 	{
 		$name = trim($name, ' "-_');
-		return isset($this->options[$name]) ? $this->options[$name] : Null;
+		if (isset($this->options[$name])) {
+			$opt = $this->options[$name];
+		}
+		elseif (isset($this->shortcut[$name])) {
+			$opt = $this->shortcut[$name];
+		}
+
+		if (isset($opt) && $opt instanceof OptionItem) {
+			return $opt;
+		}
+
+		return Null;
 	}
 
+
+
+	function hasPositional()
+	{
+		return (bool)count($this->positions);
+	}
+
+
+
+	function getOptionAt($index)
+	{
+		if (isset($this->positions[$index])) {
+			return $this->positions[$index];
+		}
+		return Null;
+	}
 
 
 	/**

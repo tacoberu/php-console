@@ -6,9 +6,13 @@ flexible component.
 
 * Očekávám, že FW přidám jen seznam akcí. Žádné registrace ani nic podobného.
 * Očekávám, že akce se budou konfigurovat via DI.
-* Očekávám podporu pro různé formáty výstupu.
+* Očekávám podporu pro různé formáty výstupu. ansi, raw, xml, json.
+* Očekávám podporu logování a logovadel.
 * Očekávám, že nebudu muset šahat do CLI-Frameworku
 * Očekávám deklarativní zápis.
+* Očekávám, že vstupy se mi zpracují bezezbytku.
+* Očekávám, že standardní chování udělá za mě: help, version; ukážou se mi možné hodnoty i defaultní.
+
 
 # Use
 php-control-examples
@@ -16,19 +20,38 @@ php-control-examples
 
 # Konkurence
 
-https://github.com/c9s/CLIFramework - Dost velký.
-https://github.com/Cilex/Cilex - Defakto postavené na symfony
-https://github.com/symfony/Console - Vyzkoušeno, nedokonalé.
-https://github.com/wp-cli/php-cli-tools - to fakt ne
-http://laravel.com/docs/5.0/artisan - Laravel, ?
-https://github.com/b-b3rn4rd/Terminalor - ?
-http://seagullproject.org/ - ? 500
-https://phpconsole.com/ - ?
+https://github.com/c9s/CLIFramework
+	- Dost velký.
+https://github.com/Cilex/Cilex
+	- Defakto postavené na symfony
+	- Móda calbacků a fluent interface.
+https://github.com/symfony/Console
+	- Vyzkoušeno, nedokonalé.
+	- Výstup je sice barevný, ale když to chce člověk přepnout do xml, tak klade odpor. Po pravdě, samo to neumí.
+	- Pro vytvoření aplikace spousta boilerplate.
+	- Vyžaduje povinného předka,
+	- Vůbec neřeší DI.
+	- Sice umí popsat jednotlivé příkazy, ale help si musíte napsat sami.
+	- Poziční parametry?
+https://github.com/wp-cli/php-cli-tools
+	- to fakt ne
+http://laravel.com/docs/5.0/artisan
+	- Laravel, ?
+https://github.com/b-b3rn4rd/Terminalor
+	- ?
+http://seagullproject.org/
+	- ? 500
+https://phpconsole.com/
+	- ?
 http://www.yiiframework.com/extension/php-console/
 http://www.yiiframework.com/doc/guide/1.1/en/topics.console
+	- ?
 https://github.com/barbushin/php-console
+	- ?
 http://framework.zend.com/manual/current/en/modules/zend.console.introduction.html
+	- ?
 http://etopian.com/software/php-cli-framework/
+	- ?
 
 
 # TODO
@@ -55,6 +78,11 @@ http://etopian.com/software/php-cli-framework/
 	náhodným jménem, a aby se to jméno získalo, tak se musí vytvořit instance,
 	včetně všech závislostí. Což znamená, že pro každý request se vygeneruje
 	kompletní graf. Možná by to nevadilo, ale nebudu to nyní řešit.
+22.	Scénář, kdy chceme akce generovat dynamicky na základě předlohy - spec souboru. Aka phing, hockej, atd.
+23.	Poziční parametry, tedy: akce foo boo --ver 5
+24.	Profiling je docela zajímavá věc.
+25.	Help pro jednotlivé akce. Něco jako help list, help commit, ...
+26.	Vícero příkazů stejného jména: `action --name Martin --name Magdalena`
 
 
 # Changelog

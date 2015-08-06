@@ -167,7 +167,7 @@ class NetteContainer implements Container
 	function getGenericSignature()
 	{
 		$sign = new OptionSignature();
-		$sign->addOption('working-dir', '.', $sign::TYPE_TEXT, 'If specified, use the given directory as working directory.');
+		$sign->addOptional('working-dir', '.', $sign::TYPE_TEXT, 'If specified, use the given directory as working directory.');
 		return $sign;
 	}
 
