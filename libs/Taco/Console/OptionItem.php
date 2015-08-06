@@ -18,18 +18,21 @@ class OptionItem
 
 	/**
 	 * Jméno volby.
+	 * @var string
 	 */
 	private $name;
 
 
 	/**
 	 * Zkrácený název
+	 * @var string
 	 */
 	private $shortname;
 
 
 	/**
 	 * Důkladný popis.
+	 * @var string
 	 */
 	private $description;
 
@@ -46,8 +49,14 @@ class OptionItem
 	private $useDefaultValue = False;
 
 
+	/**
+	 * @param string
+	 * @param string
+	 */
 	function __construct($name, $description)
 	{
+		Validators::assert($name, 'string:1..');
+		Validators::assert($description, 'string:1..');
 		$this->name = $name;
 		$this->description = $description;
 	}
@@ -63,13 +72,20 @@ class OptionItem
 
 
 
+	/**
+	 * @param string
+	 */
 	function setShortname($name)
 	{
+		Validators::assert($name, 'string:1..');
 		$this->shortname = $name;
 	}
 
 
 
+	/**
+	 * @return string
+	 */
 	function getShortname()
 	{
 		return $this->shortname;
@@ -77,6 +93,9 @@ class OptionItem
 
 
 
+	/**
+	 * @return string
+	 */
 	function getName()
 	{
 		return $this->name;
@@ -84,6 +103,9 @@ class OptionItem
 
 
 
+	/**
+	 * @return string
+	 */
 	function getDescription()
 	{
 		return $this->description;
@@ -91,9 +113,12 @@ class OptionItem
 
 
 
+	/**
+	 * @return bool
+	 */
 	function hasDefaultValue()
 	{
-		return $this->useDefaultValue;
+		return (bool)$this->useDefaultValue;
 	}
 
 
@@ -114,6 +139,10 @@ class OptionItem
 	}
 
 
+	/**
+	 * Minimální a maximální počet prvků.
+	 * @return int
+	 */
 	function getValence()
 	{
 		return 1;
@@ -122,16 +151,22 @@ class OptionItem
 }
 
 
+
 /**
  * Nenese žádnou hodnotu, je jen příznakem. Obvykle se převede na name => True
  */
 class FlagOptionItem extends OptionItem
 {
+
 	function getType()
 	{
 		return '-';
 	}
 
+	/**
+	 * Minimální a maximální počet prvků.
+	 * @return int
+	 */
 	function getValence()
 	{
 		return 0;
@@ -163,79 +198,22 @@ class ConstraintOptionItem extends OptionItem
 
 	function getType()
 	{
-		return $this->type->getName();
-	}
-
-}
-
-
-class TextOptionItem extends OptionItem
-{
-	function getType()
-	{
-		return 'text';
-	}
-}
-
-
-class IntOptionItem extends OptionItem
-{
-
-	function parse($val)
-	{
-		Validators::assert($val, 'numericint', "`--{$this->getName()}'");
-		return (int)$val;
-	}
-
-
-	function getType()
-	{
-		return 'int';
-	}
-
-
-}
-
-
-class FloatOptionItem extends OptionItem
-{
-
-	function parse($val)
-	{
-		Validators::assert($val, 'numeric', "`--{$this->getName()}'");
-		return (float)$val;
-	}
-
-
-	function getType()
-	{
-		return 'float';
-	}
-
-}
-
-
-class BoolOptionItem extends OptionItem
-{
-	function parse($val)
-	{
-		switch(strtolower($val)) {
-			case 'off':
-			case 'no':
-			case 'n':
-			case 'false':
-			case '0':
-				return False;
-			case 'on':
-			case 'true':
-			case 'y':
-			case 'yes':
-			case '1':
-				return True;
+		if ($this->type instanceof TypeText) {
+			return 'text';
 		}
+		if ($this->type instanceof TypeInt) {
+			return 'int';
+		}
+		if ($this->type instanceof TypeFloat) {
+			return 'float';
+		}
+		if ($this->type instanceof TypeBool) {
+			return 'bool';
+		}
+		if ($this->type instanceof TypeText) {
+			return 'text';
+		}
+		return strtr(get_class($this->type), '\\', '.');
 	}
-	function getType()
-	{
-		return 'bool';
-	}
+
 }
