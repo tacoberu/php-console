@@ -40,9 +40,18 @@ class Runner
 			$request->applyRules($this->getGenericSignature());
 			$command = $this->dispatchCommand($request);
 			$request->applyRules($command->getOptionSignature());
-			return $command->execute($request->getOptions());
+			$options = $request->getOptions();
+
+			$this->beforeExecute($options);
+			$flag = True;
+			$state = $command->execute($options);
+			$this->afterExecute($options);
+			return $state;
 		}
 		catch (Exception $e) {
+			if (isset($flag)) {
+				$this->afterExecute($options);
+			}
 			if (isset($output)) {
 				$output->error($e->getMessage());
 			}
@@ -89,6 +98,20 @@ class Runner
 	private function getGenericSignature()
 	{
 		return $this->container->getGenericSignature();
+	}
+
+
+
+	private function beforeExecute(Options $options)
+	{
+		return $this->container->beforeExecute($options);
+	}
+
+
+
+	private function afterExecute(Options $options)
+	{
+		return $this->container->afterExecute($options);
 	}
 
 

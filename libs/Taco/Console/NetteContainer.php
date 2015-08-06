@@ -21,6 +21,7 @@ class NetteContainer implements Container
 	private $appconfigFile;
 	private $tempDir;
 	private $container;
+	private $origWorkDir;
 
 
 	/**
@@ -173,6 +174,22 @@ class NetteContainer implements Container
 
 
 
+	function beforeExecute(Options $options)
+	{
+		self::assertPathExists($options->getOption('working-dir'));
+		$this->origWorkDir = getcwd();
+		chdir($options->getOption('working-dir'));
+	}
+
+
+
+	function afterExecute(Options $options)
+	{
+		chdir($this->origWorkDir);
+	}
+
+
+
 	// -- PRIVATE ------------------------------------------------------
 
 
@@ -213,6 +230,15 @@ class NetteContainer implements Container
 	private function getHelpCommand()
 	{
 		return new HelpCommand($this->getOutput(), $this);
+	}
+
+
+
+	private static function assertPathExists($path)
+	{
+		if (! file_exists($path)) {
+			throw new RuntimeException("Cannot switch to working directory `$path'.");
+		}
 	}
 
 }

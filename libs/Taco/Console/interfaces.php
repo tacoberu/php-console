@@ -139,6 +139,17 @@ interface Container
 	function getVersion();
 
 
+	/**
+	 * Prepare before execute.
+	 */
+	function beforeExecute(Options $options);
+
+
+	/**
+	 * Clean after execute.
+	 */
+	function afterExecute(Options $options);
+
 
 }
 
