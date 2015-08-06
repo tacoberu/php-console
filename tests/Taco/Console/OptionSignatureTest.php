@@ -24,18 +24,44 @@ use PHPUnit_Framework_TestCase;
  * prog one two three --pro abc four five
  * prog one two three --pro abc --pro def
  *
+ * Jsou dvě skupiny parametrů:
+ * - argumenty: které jsou poziční, ale pomocí jména je možné je vyjmout z pořadí.
+ * - optiony:   které jsou mimo pozicy.
+ *
  * @call phpunit OptionSignatureTest.php
  */
 class OptionSignatureTest extends PHPUnit_Framework_TestCase
 {
 
 
+	/**
+	 * Vyžadované parametry jsou poziční. Mohou se zadat bez uvedení jména, a nebo s uvedením jména a tím pořadí přeskočit.
+	 */
+	function testRequiredArgument1()
+	{
+		$sig = new OptionSignature();
+		$sig->addArgument('name|n', $sig::TYPE_TEXT, '...');
+		$sig->addArgumentDefault('age|a', $sig::TYPE_INT, 42, '...');
+		$sig->addOption('sex', $sig::TYPE_ENUM(['male','female']), 'male', '...');
+
+		$this->assertEquals(array('name', 'age', 'sex'), $sig->getOptionNames(), 'List of option names.');
+
+		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOptionAt(0));
+		$this->assertEqualsOption('age', $sig::TYPE_INT, $sig->getOptionAt(1));
+
+		$this->assertEquals(array('age' => 42, 'sex' => 'male'), $sig->getDefaultValues(), 'List of option names.');
+	}
+
+
+
+	/**
+	 * Vyžadované parametry jsou poziční. Mohou se zadat bez uvedení jména, a nebo s uvedením jména a tím pořadí přeskočit.
+	 */
 	function testRequiredArgument()
 	{
 		$sig = new OptionSignature();
 		$sig->addArgument('name|n', $sig::TYPE_TEXT, 'Use name');
 		$sig->addArgument('age', $sig::TYPE_INT, 'Use age');
-
 		$this->assertEquals(array('name', 'age'), $sig->getOptionNames(), 'List of option names.');
 		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOption('name'));
 		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOption('--name'));
@@ -44,16 +70,19 @@ class OptionSignatureTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($sig->getOption('n'), $sig->getOption('name'));
 		$this->assertEqualsOption('age', $sig::TYPE_INT, $sig->getOption(' age'));
 		$this->assertNull($sig->getOption('age')->getShortname());
-		$this->assertFalse($sig->hasPositional());
 	}
 
 
 
+	/**
+	 * Volitelné parametry musí být vždy uvedeny jménem.
+	 */
 	function testOptionalArgument()
 	{
 		$sig = new OptionSignature();
-		$sig->addOptional('show|s', True, $sig::TYPE_BOOL, 'Zobrazit volitelně.');
-		$sig->addOptional('size', 42, $sig::TYPE_INT, 'Use age');
+		//~ $sig->addOptional('show|s', True, $sig::TYPE_BOOL, 'Zobrazit volitelně.');
+		$sig->addOption('show|s', $sig::TYPE_BOOL, True, 'Zobrazit volitelně.');
+		$sig->addOption('size', $sig::TYPE_INT, 42, 'Use age');
 
 		$this->assertEquals(array('show', 'size'), $sig->getOptionNames(), 'List of option names.');
 		$this->assertEqualsOption('show', $sig::TYPE_BOOL, $sig->getOption('show'));
@@ -82,40 +111,43 @@ class OptionSignatureTest extends PHPUnit_Framework_TestCase
 
 
 
-	function testPositionalArgument()
-	{
-		$sig = new OptionSignature();
-		$sig->addPositional('name', $sig::TYPE_TEXT, 'poziční');
-		$sig->addPositional('surname', $sig::TYPE_TEXT, 'poziční');
-
-		$this->assertEquals(array('name', 'surname'), $sig->getOptionNames());
-		$this->assertNull($sig->getOption('name'));
-		$this->assertNull($sig->getOption('surname'));
-		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOptionAt(0));
-		$this->assertEqualsOption('surname', $sig::TYPE_TEXT, $sig->getOptionAt(1));
-		$this->assertTrue($sig->hasPositional());
-	}
-
-
-
 	function testComplex()
 	{
 		$sig = new OptionSignature();
-		$sig->addArgument('working-dir', $sig::TYPE_TEXT, 'Cesta k pracovnímu adresáři');
-		$sig->addArgument('config', $sig::TYPE_TEXT, 'Jméno configu.');
+		$sig->addOption('working-dir', $sig::TYPE_TEXT, '.', 'Cesta k pracovnímu adresáři');
+		$sig->addOption('config', $sig::TYPE_TEXT, 'config.ini', 'Jméno configu.');
 		$sig->addFlag('show|s', 'Zobrazit volitelně.');
-		$sig->addPositional('name', $sig::TYPE_TEXT, 'poziční');
-		$sig->addPositional('surname', $sig::TYPE_TEXT, 'poziční');
-		$sig->addOptional('size', 42, $sig::TYPE_INT, 'Use age');
+		$sig->addArgument('name', $sig::TYPE_TEXT, 'poziční');
+		$sig->addArgument('surname', $sig::TYPE_TEXT, 'poziční');
+		$sig->addArgumentDefault('size', $sig::TYPE_INT, 42, 'Use age');
 
-		$this->assertEquals(array('working-dir', 'config', 'show', 'name', 'surname', 'size'), $sig->getOptionNames());
-		$this->assertNull($sig->getOption('name'));
-		$this->assertNull($sig->getOption('surname'));
+		$this->assertEquals(array('name', 'surname', 'size', 'working-dir', 'config', 'show'), $sig->getOptionNames());
 		$this->assertEqualsOption('show', $sig::TYPE_BOOL, $sig->getOption('show'));
 		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOptionAt(0));
 		$this->assertEqualsOption('surname', $sig::TYPE_TEXT, $sig->getOptionAt(1));
 		$this->assertEqualsOption('size', $sig::TYPE_INT, $sig->getOption('size'));
-		$this->assertTrue($sig->hasPositional());
+	}
+
+
+
+	function testMergeSignature()
+	{
+		$a = new OptionSignature();
+		$a->addArgument('a1', $a::TYPE_TEXT, '..');
+		$a->addArgumentDefault('a2', $a::TYPE_INT, 42, '..');
+		$a->addOption('a3', $a::TYPE_TEXT, 'config.ini', '...');
+
+		$b = new OptionSignature();
+		$b->addArgument('b1', $b::TYPE_TEXT, '..');
+		$b->addArgumentDefault('b2', $b::TYPE_INT, 42, '..');
+		$b->addOption('b3', $b::TYPE_TEXT, 'config.ini', '...');
+
+		$a->merge($b);
+		$this->assertEquals(array('a1', 'a2', 'b1', 'b2', 'a3', 'b3'), $a->getOptionNames());
+		$this->assertEqualsOption('a1', $a::TYPE_TEXT, $a->getOptionAt(0));
+		$this->assertEqualsOption('a2', $a::TYPE_INT, $a->getOptionAt(1));
+		$this->assertEqualsOption('b1', $a::TYPE_TEXT, $a->getOptionAt(2));
+		$this->assertEqualsOption('b2', $a::TYPE_INT, $a->getOptionAt(3));
 	}
 
 
