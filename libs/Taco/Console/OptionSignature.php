@@ -183,6 +183,24 @@ class OptionSignature
 
 
 	/**
+	 * @param string $name
+	 * @return int
+	 */
+	function getIndexOfOption($name)
+	{
+		$index = 0;
+		foreach ($this->arguments as $item){
+			if ($item->getName() == $name) {
+				return $index;
+			}
+			$index++;
+		}
+		return -1;
+	}
+
+
+
+	/**
 	 * Seznam všech názvů argumentů.
 	 * @return array of string
 	 */

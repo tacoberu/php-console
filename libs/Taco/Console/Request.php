@@ -37,9 +37,15 @@ class Request
 
 
 	/**
-	 * Na jaképozici jsme co se argumentů týče?
+	 * Na jaké pozici jsme co se argumentů týče?
 	 */
 	private $position = 0;
+
+
+	/**
+	 * Které poziční už byly použity. Musí se přeskakovat.
+	 */
+	private $skiped = array();
 
 
 	/**
@@ -85,11 +91,24 @@ class Request
 			// Klíč je jméno?
 			if (self::isOptionFormat($item)) {
 				if ($opt = $this->signature->getOption($item)) {
+					$index = $this->signature->getIndexOfOption($opt->getName());
+					// Je to poziční, a...
+					if ($index >= 0) {
+						// Právě jsi na správné pozici, jméno je nadbytečné. Ale jsme ve špatné podmínce.
+						if ($index == $this->position) {
+							$this->position++;
+						}
+						// Mimo pořadí, musím to trochu zamíchat...
+						elseif ($index > $this->position) {
+							$this->skiped[] = $opt->getName();
+						}
+					}
+
 					$values = array_splice($args, 0, $opt->getValence());
 					if ($opt->getValence() == 1) {
 						$values = reset($values);
 					}
-					$this->args[$opt->getName()] = $values;
+					$this->args[$opt->getName()] = $opt->parse($values);
 				}
 				// Nevíme co jsou další data zač, možná je známe, možná ne.
 				else {
@@ -100,11 +119,19 @@ class Request
 					break;
 				}
 			}
+			// Poziční, nebo nerozhodnutelný.
 			else {
-				if ($opt = $this->signature->getOptionAt($this->position)) {
+				// Přeskočit už použité.
+				while (($opt = $this->signature->getOptionAt($this->position))
+						&& in_array($opt->getName(), $this->skiped)) {
+					$this->position++;
+				}
+
+				// Poziční
+				if ($opt) {
 					$this->position++;
 					// a co valence?
-					$this->args[$opt->getName()] = $item;
+					$this->args[$opt->getName()] = $opt->parse($item);
 				}
 				// Nevíme co jsou další data zač, možná je známe, možná ne.
 				else {

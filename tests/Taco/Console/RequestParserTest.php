@@ -260,6 +260,88 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 
 
 
+	/**
+	 * Kontrolovat typy hodnot.
+	 */
+	function testValidateType()
+	{
+		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of int: `s55'.");
+		$req = new Request('app');
+		$req->addRawData(array(
+				's55',
+				));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('age', $sig::TYPE_INT, '...');
+
+		$req->applyRules($sig);
+	}
+
+
+
+	/**
+	 * Vyžadovat pomlčky
+	 * 	Když přepíšu --name dříve, než má pořadí, tak musím to pořadí nějak zohlednit.
+	 *
+	 * def name age name2 name3
+	 * app hello -d ../.. --name Martin age 55
+	 */
+	function testPositionalArgument4()
+	{
+		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of int: `age'.");
+		$req = new Request('app');
+		$req->addRawData(array(
+				'-d', '../ddd',
+				'--name', 'John',
+				'age', '55',
+				));
+		$sig = $this->getOptionSignatureFor('person');
+		$req->applyRules($sig);
+	}
+
+
+
+	/**
+	 * Vyžadovat pomlčky
+	 * 	Když přepíšu --name dříve, než má pořadí, tak musím to pořadí nějak zohlednit.
+	 *
+	 * def name age name2 name3
+	 * app hello -d ../.. --name Martin age 55
+	 */
+	function testPositionalArgument5()
+	{
+		$req = new Request('app');
+		$req->addRawData(array(
+				'--name3', 'Trois',
+				'--name5', 'Cinq',
+				'Une',
+				'Deux',
+				'Quatre',
+				'Six',
+				));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('name1', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('name2', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('name3', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('name4', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('name5', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('name6', $sig::TYPE_TEXT, '...');
+
+		$req->applyRules($sig);
+
+		$this->assertEquals(new Options([
+				'name1' => "Une",
+				'name2' => "Deux",
+				'name3' => "Trois",
+				'name4' => "Quatre",
+				'name5' => "Cinq",
+				'name6' => "Six",
+				]), $req->getOptions());
+	}
+
+
+
 	// -- PRIVATE ------------------------------------------------------
 
 
@@ -277,6 +359,7 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 				$sig = new OptionSignature();
 				$sig->addArgument('name', $sig::TYPE_TEXT, '...');
 				$sig->addArgument('age', $sig::TYPE_INT, '...');
+				$sig->addOption('working-dir|d', $sig::TYPE_TEXT, '.', 'Cesta k pracovnímu adresáři.');
 				return $sig;
 			case 'generic-with-config':
 				$sig = new OptionSignature();
