@@ -8,7 +8,8 @@ namespace Taco\Console;
 
 
 use InvalidArgumentException,
-	RuntimeException;
+	RuntimeException,
+	UnexpectedValueException;
 
 
 /**
@@ -108,7 +109,12 @@ class Request
 					if ($opt->getValence() == 1) {
 						$values = reset($values);
 					}
-					$this->args[$opt->getName()] = $opt->parse($values);
+					try {
+						$this->args[$opt->getName()] = $opt->parse($values);
+					}
+					catch (TypeException $e) {
+						throw new UnexpectedValueException("Option `{$opt->getName()}' has invalid type of value: `{$e->getValue()}'. Except type: `{$e->getTypeName()}'.", 1, $e);
+					}
 				}
 				// Nevíme co jsou další data zač, možná je známe, možná ne.
 				else {
@@ -131,7 +137,12 @@ class Request
 				if ($opt) {
 					$this->position++;
 					// a co valence?
-					$this->args[$opt->getName()] = $opt->parse($item);
+					try {
+						$this->args[$opt->getName()] = $opt->parse($item);
+					}
+					catch (TypeException $e) {
+						throw new UnexpectedValueException("Option `{$opt->getName()}' has invalid type of value: `{$e->getValue()}'. Except type: `{$e->getTypeName()}'.", 1, $e);
+					}
 				}
 				// Nevíme co jsou další data zač, možná je známe, možná ne.
 				else {

@@ -265,7 +265,7 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 	 */
 	function testValidateType()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of int: `s55'.");
+		$this->setExpectedException('UnexpectedValueException', "Option `age' has invalid type of value: `s55'. Except type: `int'.");
 		$req = new Request('app');
 		$req->addRawData(array(
 				's55',
@@ -288,7 +288,7 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 	 */
 	function testPositionalArgument4()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of int: `age'.");
+		$this->setExpectedException('UnexpectedValueException', "Option `age' has invalid type of value: `age'. Except type: `int'.");
 		$req = new Request('app');
 		$req->addRawData(array(
 				'-d', '../ddd',

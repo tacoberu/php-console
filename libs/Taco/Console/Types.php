@@ -7,9 +7,39 @@
 namespace Taco\Console;
 
 
-
-use InvalidArgumentException;
+use UnexpectedValueException,
+	Exception;
 use Nette\Utils\Validators;
+
+
+class TypeException extends UnexpectedValueException
+{
+
+	private $typename, $value;
+
+	function __construct($typename, $value, $message = Null, $code = 0, Exception $previous = NULL)
+	{
+		if (empty($message)) {
+			$message = "Unrecognizable type of {$typename}: `{$value}'.";
+		}
+		parent::__construct($message, $code, $previous);
+		$this->typename = $typename;
+		$this->value = $value;
+	}
+
+
+	function getTypeName()
+	{
+		return $this->typename;
+	}
+
+
+	function getValue()
+	{
+		return $this->value;
+	}
+
+}
 
 
 
@@ -61,7 +91,7 @@ class TypeInt implements Type
 		if (Validators::is($val, 'numericint')) {
 			return (int)$val;
 		}
-		throw new InvalidArgumentException("Unrecognizable type of int: `{$val}'.");
+		throw new TypeException('int', $val);
 	}
 
 }
@@ -82,7 +112,7 @@ class TypeFloat implements Type
 		if (Validators::is($val, 'numeric')) {
 			return (float)$val;
 		}
-		throw new InvalidArgumentException("Unrecognizable type of float: `{$val}'.");
+		throw new TypeException('float', $val);
 	}
 
 }
@@ -114,7 +144,7 @@ class TypeBool implements Type
 			case '1':
 				return True;
 			default:
-				throw new InvalidArgumentException("Unrecognizable type of bool: `{$val}'.");
+				throw new TypeException('bool', $val);
 		}
 	}
 
@@ -148,10 +178,11 @@ class TypeEnum implements Type
 	function cast($val)
 	{
 		if (empty($val)) {
-			throw new InvalidArgumentException("Value must by of enum(" . implode(',', $this->options) . ").");
+			$typename = "enum(" . implode(',', $this->options) . ")";
+			throw new TypeException($typename, $val, "Unrecognizable type of {$typename}: empty.");
 		}
 		if (! in_array($val, $this->options)) {
-			throw new InvalidArgumentException("Value `$val' is not of enum(" . implode(',', $this->options) . ").");
+			throw new TypeException("enum(" . implode(',', $this->options) . ")", $val);
 		}
 		return $val;
 	}
@@ -193,13 +224,14 @@ class TypeSet implements Type
 	function cast($val)
 	{
 		if (empty($val)) {
-			throw new InvalidArgumentException("Value must by of set(" . implode(',', $this->options) . ").");
+			$typename = "set(" . implode(',', $this->options) . ")";
+			throw new TypeException($typename, $val, "Unrecognizable type of {$typename}: empty.");
 		}
 
 		$val = explode($this->sep, $val);
 		$missing = array_diff($val, $this->options);
 		if (count($missing)) {
-			throw new InvalidArgumentException("Value `" . implode(',', $missing). "' is not of set(" . implode(',', $this->options) . ").");
+			throw new TypeException("set(" . implode(',', $this->options) . ")", implode(',', $missing));
 		}
 		return $val;
 	}

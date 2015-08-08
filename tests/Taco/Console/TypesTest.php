@@ -42,7 +42,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testIntInvalidFloat()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of int: `5.5'.");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of int: `5.5'.");
 		$t = new TypeInt();
 		$t->cast('5.5');
 	}
@@ -51,7 +51,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testIntInvalidString()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of int: `male'.");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of int: `male'.");
 		$t = new TypeInt();
 		$t->cast('male');
 	}
@@ -69,7 +69,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testFloatInvalid()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of float: `male'.");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of float: `male'.");
 		$t = new TypeFloat();
 		$t->cast('male');
 	}
@@ -95,7 +95,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testBooleanInvalid()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Unrecognizable type of bool: `male'.");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of bool: `male'.");
 		$t = new TypeBool();
 		$t->cast('male');
 	}
@@ -112,7 +112,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testEnumEmpty()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Value must by of enum(male,female,alien).");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of enum(male,female,alien): empty.");
 		$t = new TypeEnum(['male', 'female', 'alien']);
 		$t->cast('');
 	}
@@ -121,7 +121,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testEnumInvalid()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Value `alien' is not of enum(male,female).");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of enum(male,female): `alien'.");
 		$t = new TypeEnum(['male', 'female']);
 		$t->cast('alien');
 	}
@@ -146,7 +146,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testSetEmpty()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Value must by of set(male,female,alien).");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of set(male,female,alien): empty.");
 		$t = new TypeSet(['male', 'female', 'alien']);
 		$t->cast('');
 	}
@@ -155,7 +155,7 @@ class TypesTest extends PHPUnit_Framework_TestCase
 
 	function testSetInvalid()
 	{
-		$this->setExpectedException('InvalidArgumentException', "Value `boot' is not of set(male,female,alien).");
+		$this->setExpectedException('Taco\Console\TypeException', "Unrecognizable type of set(male,female,alien): `boot'.");
 		$t = new TypeSet(['male', 'female', 'alien']);
 		$t->cast('boot');
 	}
