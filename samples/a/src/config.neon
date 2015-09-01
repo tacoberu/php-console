@@ -1,0 +1,19 @@
+parameters:
+	version: 0.0.1
+	defaultCommand: help
+	appname: app
+	appdescription: Moje první pokusná aplikace používající framework tacoberu/php-console
+	author: Martin Takáčs
+	email: 'martin@takac.name'
+
+services:
+	# služby
+	output: Taco\Console\Output
+	parser: Taco\Console\RequestEnvParser(%defaultCommand%)
+
+	# commandy
+	command.hello:
+		class: App\Console\HelloCommand
+	command.version:
+		class: App\Console\VersionCommand
+		arguments: [@output, %version%]
