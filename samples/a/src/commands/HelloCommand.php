@@ -75,8 +75,7 @@ class HelloCommand implements Command
 	 */
 	function execute(Options $opts)
 	{
-		var_dump(getcwd());
-		$this->output->notice(sprintf("Hello %s (%d)", $opts->getOption('name'), $opts->getOption('age')));
+		$this->output->notice(sprintf("Hello %s %s (%d)", $opts->getOption('title'), $opts->getOption('name'), $opts->getOption('age')));
 	}
 
 

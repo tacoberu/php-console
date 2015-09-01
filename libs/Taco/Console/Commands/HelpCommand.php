@@ -8,7 +8,7 @@ namespace Taco\Console;
 
 
 /**
- * Defaultní implementace zobrazení nápovědy ke všem kommandům.
+ * Default implementation for show help at all command.
  */
 class HelpCommand implements Command
 {
@@ -18,7 +18,8 @@ class HelpCommand implements Command
 
 
 	/**
-	 * Závislosti na služby. I výstup je služba-
+	 * @param Output $output Where show documentation.
+	 * @param Container $container Source of list of commands.
 	 */
 	function __construct(Output $output, Container $container)
 	{
@@ -29,7 +30,6 @@ class HelpCommand implements Command
 
 
 	/**
-	 * Jméno akce
 	 * @return string
 	 */
 	function getName()
@@ -44,13 +44,12 @@ class HelpCommand implements Command
 	 */
 	function getDescription()
 	{
-		return 'Tato dokumentace.';
+		return 'This documentation.';
 	}
 
 
 
 	/**
-	 * Definice pro nutné nastavení.
 	 * @return OptionSignature
 	 */
 	function getOptionSignature()
@@ -61,13 +60,13 @@ class HelpCommand implements Command
 
 
 	/**
-	 * Provede výkonný kód.
+	 * @return int
 	 */
 	function execute(Options $opts)
 	{
 		$commands = array();
 		foreach ($this->container->getCommandList() as $command) {
-			$commands[] = $this->formatCommand($command);
+			$commands[] = self::formatCommand($command);
 		}
 
 		if ($desc = $this->container->getApplicationDescription()) {
@@ -92,17 +91,31 @@ class HelpCommand implements Command
 
 
 
-	private function formatCommand($command)
+	/**
+	 * @return string
+	 */
+	private static function formatCommand(Command $command)
 	{
 		$options = array();
 		foreach ($command->getOptionSignature()->getOptionNames() as $name) {
 			$opt = $command->getOptionSignature()->getOption($name);
-			$options[] = sprintf("    --%-6s %-6s %s", $opt->getName(), '[' . $opt->getType() . ']', $opt->getDescription());
+			$options[] = sprintf("    --%-6s %-6s %s%s", $opt->getName(), '[' . $opt->getType() . ']', $opt->getDescription(), self::formatDefaultValue($opt));
 		}
 		return sprintf("  %-10s %s%s", $command->getName(),
 				$command->getDescription(),
 				count($options) ? PHP_EOL . implode(PHP_EOL, $options) : '');
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	private static function formatDefaultValue(OptionItem $opt)
+	{
+		if ($val = $opt->getDefaultValue()) {
+			return " ({$val})";
+		}
+	}
 
 }
