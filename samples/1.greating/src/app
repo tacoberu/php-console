@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+/**
+ * @copyright 2016 Martin Takáč (http://martin.takac.name)
+ * @license   https://opensource.org/licenses/MIT MIT
+ */
+
+if (@!include __DIR__ . '/../../../vendor/autoload.php') {
+	echo 'Install Application using `composer install`';
+	exit(1);
+}
+
+require __dir__ . '/commands/HelloCommand.php';
+
+use Taco\Console;
+
+$container = new Console\StaticContainer('0.0.1',
+	'greating',
+	'Ukázková aplikace. Smyslem je, definovat commandy bez žádného dalšího okecávání.
+
+Commandy mohou a nemusí spolupracovat. Když spolupracují, tak můžeme použít továrničku, která nám usnadní vytvoření.
+Všechny ty závislosti a přepínače se definují u commandu, a FW si je sám extrahuje.',
+null,
+[
+	Console\Author::fromString('Martin Takáč <martin@takac.name>'),
+	Console\Author::fromString('Nermal Kowalski <kowalski@nermal.cz>'),
+]
+);
+$container->addInstance(new Console\HumanOutput(new Console\Stream()));
+$container->addInstance(new Console\XmlOutput(new Console\Stream()));
+$container->addInstance(new Console\RequestEnvParser('help'));
+$container->addInstance(Console\ReflectionDescribedBuilder::buildCommand(App\Console\HelloCommand::class));
+$container->addInstance(Console\ReflectionDescribedBuilder::buildCommand(Console\VersionCommand::class));
+$container->addInstance(Console\ReflectionDescribedBuilder::buildCommand(Console\HelpCommand::class));
+$container->addInstance(Console\ReflectionDescribedBuilder::buildCommand(Console\ListCommand::class));
+
+$app = new Console\Runner($container);
+
+exit($app->run($GLOBALS));
