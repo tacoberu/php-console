@@ -7,12 +7,8 @@
 namespace Taco\Console;
 
 
-use Nette;
-
-
 /**
- * Reprezentuje popis závislost a implementaci vstupních bodů. Jeden kommand
- * je jedna akce, ale může být spouštěna ve více módech (dry-run, check a podobně)
+ * Defaultní implementace zobrazení nápovědy ke všem kommandům.
  */
 class HelpCommand implements Command
 {
@@ -34,6 +30,7 @@ class HelpCommand implements Command
 
 	/**
 	 * Jméno akce
+	 * @return string
 	 */
 	function getName()
 	{
@@ -43,7 +40,7 @@ class HelpCommand implements Command
 
 
 	/**
-	 * Popis
+	 * @return string
 	 */
 	function getDescription()
 	{

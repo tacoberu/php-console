@@ -92,13 +92,19 @@ class NetteContainer implements Container
 	function getCommand($name)
 	{
 		try {
+			$name = strtr($name, ':', '_');
 			switch ($name) {
 				case 'version':
+					if ($this->getContainer()->hasService("command.{$name}")) {
+						return $this->getContainer()->getService("command.{$name}");
+					}
 					return $this->getVersionCommand();
 				case 'help':
+					if ($this->getContainer()->hasService("command.{$name}")) {
+						return $this->getContainer()->getService("command.{$name}");
+					}
 					return $this->getHelpCommand();
 				default:
-					$name = strtr($name, ':', '_');
 					return $this->getContainer()->getService("command.{$name}");
 			}
 		}

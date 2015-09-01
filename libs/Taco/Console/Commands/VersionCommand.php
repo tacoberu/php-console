@@ -7,12 +7,8 @@
 namespace Taco\Console;
 
 
-use Nette;
-
-
 /**
- * Reprezentuje popis závislost a implementaci vstupních bodů. Jeden kommand
- * je jedna akce, ale může být spouštěna ve více módech (dry-run, check a podobně)
+ * Defaultní implementace zobrazení verze aplikace.
  */
 class VersionCommand implements Command
 {
@@ -24,6 +20,8 @@ class VersionCommand implements Command
 
 	/**
 	 * Závislosti na služby. I výstup je služba-
+	 * @param Output $output
+	 * @param int $version
 	 */
 	function __construct(Output $output, $version)
 	{
