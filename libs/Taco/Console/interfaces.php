@@ -134,7 +134,7 @@ interface Container
 
 	/**
 	 * Verze aplikace.
-	 * @return string 0.0.1
+	 * @return string like 0.0.1
 	 */
 	function getVersion();
 
@@ -162,7 +162,8 @@ interface RequestParser
 {
 
 	/**
-	 * @return ?
+	 * @param array
+	 * @return Request
 	 */
 	function parse(array $env);
 

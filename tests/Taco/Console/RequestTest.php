@@ -22,9 +22,9 @@ use PHPUnit_Framework_TestCase;
  * - Poziční parametr s defaultní hodnotou: Musí být až jako na konec.
  * - Poziční parametr povinný: Určuje jméno.
  *
- * @call phpunit OptionsTest.php
+ * @call phpunit RequestTest.php
  */
-class RequestParserTest extends PHPUnit_Framework_TestCase
+class RequestTest extends PHPUnit_Framework_TestCase
 {
 
 
@@ -337,6 +337,58 @@ class RequestParserTest extends PHPUnit_Framework_TestCase
 				'name4' => "Quatre",
 				'name5' => "Cinq",
 				'name6' => "Six",
+				]), $req->getOptions());
+	}
+
+
+
+	/**
+	 * Pojmenované argumenty lze oddělovat rovnítkem.
+	 * app hello --name=Trois age 55
+	 */
+	function testNamedWithEq()
+	{
+		$req = new Request('app');
+		$req->addRawData(array(
+				'--name=Trois',
+				'--age', '55'
+				));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('name', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('age', $sig::TYPE_INT, '...');
+
+		$req->applyRules($sig);
+
+		$this->assertEquals(new Options([
+				'name' => "Trois",
+				'age' => 55,
+				]), $req->getOptions());
+	}
+
+
+
+	/**
+	 * Pojmenované argumenty lze oddělovat rovnítkem. Hodně podraz.
+	 * app hello --name=Trois age 55
+	 */
+	function testNamedWithEqComplex()
+	{
+		$req = new Request('app');
+		$req->addRawData(array(
+				'--name=--name=foo',
+				'--age', '55'
+				));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('name', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('age', $sig::TYPE_INT, '...');
+
+		$req->applyRules($sig);
+
+		$this->assertEquals(new Options([
+				'name' => "--name=foo",
+				'age' => 55,
 				]), $req->getOptions());
 	}
 

@@ -17,7 +17,8 @@ class RequestEnvParser implements RequestParser
 
 
 	/**
-	 * Závislosti na služby. I výstup je služba.
+	 * @param string $defaultcommand Make default signature with first argument
+	 * as command name. If unnused, set this value.
 	 */
 	function __construct($defaultcommand = Null)
 	{
@@ -27,6 +28,7 @@ class RequestEnvParser implements RequestParser
 
 
 	/**
+	 * @param array $env
 	 * @return Request
 	 */
 	function parse(array $env)

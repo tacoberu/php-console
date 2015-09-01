@@ -44,10 +44,8 @@ class OptionSignatureTest extends PHPUnit_Framework_TestCase
 		$sig->addOption('sex', $sig::TYPE_ENUM(['male','female']), 'male', '...');
 
 		$this->assertEquals(array('name', 'age', 'sex'), $sig->getOptionNames(), 'List of option names.');
-
 		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOptionAt(0));
 		$this->assertEqualsOption('age', $sig::TYPE_INT, $sig->getOptionAt(1));
-
 		$this->assertEquals(array('age' => 42, 'sex' => 'male'), $sig->getDefaultValues(), 'List of option names.');
 	}
 
@@ -61,6 +59,7 @@ class OptionSignatureTest extends PHPUnit_Framework_TestCase
 		$sig = new OptionSignature();
 		$sig->addArgument('name|n', $sig::TYPE_TEXT, 'Use name');
 		$sig->addArgument('age', $sig::TYPE_INT, 'Use age');
+
 		$this->assertEquals(array('name', 'age'), $sig->getOptionNames(), 'List of option names.');
 		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOption('name'));
 		$this->assertEqualsOption('name', $sig::TYPE_TEXT, $sig->getOption('--name'));

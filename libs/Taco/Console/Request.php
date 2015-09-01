@@ -55,6 +55,10 @@ class Request
 	private $signature;
 
 
+
+	/**
+	 * @param string $program
+	 */
 	function __construct($program)
 	{
 		$this->program = $program;
@@ -91,6 +95,10 @@ class Request
 		while (count($args) && $item = array_shift($args)) {
 			// Klíč je jméno?
 			if (self::isOptionFormat($item)) {
+				if (strpos($item, '=')) {
+					list($item, $back) = explode('=', $item, 2);
+					array_unshift($args, $back);
+				}
 				if ($opt = $this->signature->getOption($item)) {
 					$index = $this->signature->getIndexOfOption($opt->getName());
 					// Je to poziční, a...
@@ -116,7 +124,7 @@ class Request
 						throw new UnexpectedValueException("Option `{$opt->getName()}' has invalid type of value: `{$e->getValue()}'. Except type: `{$e->getTypeName()}'.", 1, $e);
 					}
 				}
-				// Nevíme co jsou další data zač, možná je známe, možná ne.
+				// Nevíme co jsou další data zač, možná je známe, možná ne. Konec.
 				else {
 					$tail[] = $item;
 					foreach ($args as $item) {
@@ -210,6 +218,10 @@ class Request
 		}
 		return new Options($this->args);
 	}
+
+
+
+	// -- PRIVATE ------------------------------------------------------
 
 
 

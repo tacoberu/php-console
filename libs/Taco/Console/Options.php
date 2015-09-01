@@ -45,4 +45,13 @@ class Options
 	}
 
 
+
+	/**
+	 * @return array
+	 */
+	function asArray()
+	{
+		return $this->options;
+	}
+
 }

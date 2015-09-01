@@ -35,7 +35,7 @@ class Runner
 	function run(array $env)
 	{
 		try {
-			$output = $this->container->getOutput();
+			//~ $output = $this->container->getOutput();
 			$request = $this->parseFromEnv($env);
 			$request->applyRules($this->getGenericSignature());
 			$command = $this->dispatchCommand($request);
@@ -46,7 +46,7 @@ class Runner
 			$flag = True;
 			$state = $command->execute($options);
 			$this->afterExecute($options);
-			return $state;
+			return (int)$state;
 		}
 		catch (Exception $e) {
 			if (isset($flag)) {
@@ -74,8 +74,7 @@ class Runner
 	private function parseFromEnv(array $env)
 	{
 		$parser = $this->container->getRequestParser();
-		$request = $parser->parse($env);
-		return $request;
+		return $parser->parse($env);
 	}
 
 
