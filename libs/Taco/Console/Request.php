@@ -24,6 +24,11 @@ class Request
 	 */
 	private $program;
 
+	/**
+	 * Z jakého místa to bylo spouštěno.
+	 */
+	private $pwd;
+
 
 	/**
 	 * Nezpracovaná data.
@@ -58,10 +63,12 @@ class Request
 
 	/**
 	 * @param string $program
+	 * @param string $pwd Z jakého místa to bylo spouštěno.
 	 */
-	function __construct($program)
+	function __construct($program, $pwd)
 	{
 		$this->program = $program;
+		$this->pwd = $pwd;
 		$this->signature = new OptionSignature();
 	}
 
@@ -217,6 +224,26 @@ class Request
 			throw new RuntimeException("Missing required options:\n" . implode("\n", $res) . "");
 		}
 		return new Options($this->args);
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	function getProgram()
+	{
+		return $this->program;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	function getWorkingDir()
+	{
+		return $this->pwd;
 	}
 
 

@@ -11,7 +11,7 @@ use Nette\Utils\Validators;
 
 
 /**
- * Volba, parametr. Napříklda `--name Name`.
+ * Example `--name Name`.
  */
 abstract class OptionItem
 {
@@ -63,9 +63,12 @@ abstract class OptionItem
 
 
 
-	function setDefaultValue($text)
+	/**
+	 * @param string|int|float|closure
+	 */
+	function setDefaultValue($val)
 	{
-		$this->defaultValue = $text;
+		$this->defaultValue = $val;
 		$this->useDefaultValue = True;
 		return $this;
 	}
@@ -106,6 +109,13 @@ abstract class OptionItem
 	/**
 	 * @return string
 	 */
+	abstract function getType();
+
+
+
+	/**
+	 * @return string
+	 */
 	function getDescription()
 	{
 		return $this->description;
@@ -125,6 +135,10 @@ abstract class OptionItem
 
 	function getDefaultValue()
 	{
+		if (is_callable($this->defaultValue)) {
+			$cb = $this->defaultValue;
+			return $cb();
+		}
 		return $this->defaultValue;
 	}
 

@@ -31,7 +31,12 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 	{
 		$item = new FlagOptionItem('flg', 'desc');
 		$this->assertEquals('flg', $item->getName());
-		$this->assertEquals('desc', $item->getdescription());
+		$this->assertNull($item->getShortname());
+		$this->assertEquals('-', $item->getType());
+		$this->assertEquals('desc', $item->getDescription());
+		$this->assertFalse($item->hasDefaultValue());
+		$this->assertNull($item->getDefaultValue());
+		$this->assertEquals(0, $item->getValence());
 	}
 
 
@@ -40,8 +45,13 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 	{
 		$item = new ConstraintOptionItem(new TypeText, 'flg', 'desc');
 		$this->assertEquals('flg', $item->getName());
-		$this->assertEquals('desc', $item->getdescription());
+		$this->assertNull($item->getShortname());
+		$this->assertEquals('text', $item->getType());
+		$this->assertEquals('desc', $item->getDescription());
+		$this->assertFalse($item->hasDefaultValue());
+		$this->assertNull($item->getDefaultValue());
 		$this->assertEquals('lorem ipsum', $item->parse('lorem ipsum'));
+		$this->assertEquals(1, $item->getValence());
 	}
 
 
@@ -50,8 +60,45 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 	{
 		$item = new ConstraintOptionItem(new TypeInt, 'flg', 'desc');
 		$this->assertEquals('flg', $item->getName());
-		$this->assertEquals('desc', $item->getdescription());
+		$this->assertNull($item->getShortname());
+		$this->assertEquals('int', $item->getType());
+		$this->assertEquals('desc', $item->getDescription());
+		$this->assertFalse($item->hasDefaultValue());
+		$this->assertNull($item->getDefaultValue());
 		$this->assertSame(54, $item->parse('54'));
+		$this->assertEquals(1, $item->getValence());
+	}
+
+
+
+	function testOptIntDefaultValue()
+	{
+		$item = new ConstraintOptionItem(new TypeInt, 'flg', 'desc');
+		$item->setDefaultValue(42);
+		$this->assertTrue($item->hasDefaultValue());
+		$this->assertEquals(42, $item->getDefaultValue());
+	}
+
+
+
+	function testOptIntDefaultValueMustCast()
+	{
+		$item = new ConstraintOptionItem(new TypeInt, 'flg', 'desc');
+		$item->setDefaultValue('42');
+		$this->assertTrue($item->hasDefaultValue());
+		$this->assertEquals(42, $item->getDefaultValue());
+	}
+
+
+
+	function testOptIntDefaultValueMayBeClosure()
+	{
+		$item = new ConstraintOptionItem(new TypeInt, 'flg', 'desc');
+		$item->setDefaultValue(function() {
+			return 42;
+		});
+		$this->assertTrue($item->hasDefaultValue());
+		$this->assertEquals(42, $item->getDefaultValue());
 	}
 
 

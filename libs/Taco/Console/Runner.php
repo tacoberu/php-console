@@ -37,6 +37,7 @@ class Runner
 		try {
 			//~ $output = $this->container->getOutput();
 			$request = $this->parseFromEnv($env);
+			$this->container->setRequest($request);
 			$request->applyRules($this->getGenericSignature());
 			$command = $this->dispatchCommand($request);
 			$request->applyRules($command->getOptionSignature());
@@ -80,10 +81,11 @@ class Runner
 
 
 	/**
-	 * Výběr akcí.
+	 * Výběr akce.
+	 * @param Request $request
 	 * @return Command
 	 */
-	private function dispatchCommand($request)
+	private function dispatchCommand(Request $request)
 	{
 		if (! $request->getOption('command')) {
 			throw new RuntimeException("Not used command name. Try the command `help' to list all options.", 1);

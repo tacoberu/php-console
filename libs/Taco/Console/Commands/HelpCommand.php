@@ -14,6 +14,7 @@ class HelpCommand implements Command
 {
 
 	private $output;
+	private $request;
 	private $container;
 
 
@@ -21,9 +22,10 @@ class HelpCommand implements Command
 	 * @param Output $output Where show documentation.
 	 * @param Container $container Source of list of commands.
 	 */
-	function __construct(Output $output, Container $container)
+	function __construct(Output $output, Request $request, Container $container)
 	{
 		$this->output = $output;
+		$this->request = $request;
 		$this->container = $container;
 	}
 
@@ -75,16 +77,18 @@ class HelpCommand implements Command
 
 		$this->output->notice(strtr("%{appname} version: %{version}\n"
 				. "%{appdescription}"
-				. "\nUsage:\n  %{appname} <command> [--options...]\n"
-				. "\nGlobal options:\n  --working-dir (-d)    If specified, use the given directory as working directory.\n"
+				. "\nUsage:\n  %{program} <command> [--options...]\n"
+				. "\nGlobal options:\n%{global-options}\n"
 				. "\nAvailable commands:\n%{available-commands}\n"
 				. "\nAuthor:\n  %{author-name} <%{author-email}>",
 				array(
 			'%{appname}' => $this->container->getApplicationName(),
+			'%{program}' => basename($this->request->getProgram()),
 			'%{appdescription}' => $desc,
 			'%{version}' => $this->container->getVersion(),
 			'%{author-name}' => $this->container->getAuthor(),
 			'%{author-email}' => $this->container->getAuthorEmail(),
+			'%{global-options}' => implode(PHP_EOL, self::formatOptionSignature($this->container->getGenericSignature())),
 			'%{available-commands}' => implode(PHP_EOL, $commands),
 			)));
 	}
@@ -96,16 +100,28 @@ class HelpCommand implements Command
 	 */
 	private static function formatCommand(Command $command)
 	{
-		$options = array();
-		foreach ($command->getOptionSignature()->getOptionNames() as $name) {
-			$opt = $command->getOptionSignature()->getOption($name);
-			$options[] = sprintf("    --%-6s %-6s %s%s", $opt->getName(), '[' . $opt->getType() . ']', $opt->getDescription(), self::formatDefaultValue($opt));
-		}
+		$options = self::formatOptionSignature($command->getOptionSignature(), 4);
 		return sprintf("  %-10s %s%s", $command->getName(),
 				$command->getDescription(),
 				count($options) ? PHP_EOL . implode(PHP_EOL, $options) : '');
 	}
 
+
+
+	/**
+	 * @return list of string
+	 */
+	private static function formatOptionSignature(OptionSignature $sign, $pad = 2)
+	{
+		$options = array();
+		foreach ($sign->getOptionNames() as $name) {
+			$opt = $sign->getOption($name);
+			$options[] = sprintf("%s--%-6s %-6s %s%s",
+					str_pad('', $pad),
+					$opt->getName(), '[' . $opt->getType() . ']', $opt->getDescription(), self::formatDefaultValue($opt));
+		}
+		return $options;
+	}
 
 
 	/**

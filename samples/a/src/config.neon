@@ -1,10 +1,10 @@
 parameters:
 	version: 0.0.1
 	defaultCommand: help
-	appname: app
+	appname: Moje Aplikace
 	appdescription: Moje první pokusná aplikace používající framework tacoberu/php-console
-	author: Martin Takáčs
-	email: 'martin@takac.name'
+	author: John Dee
+	email: 'john@dee.uk.com'
 
 services:
 	# služby

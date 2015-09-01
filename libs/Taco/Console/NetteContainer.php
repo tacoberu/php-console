@@ -35,6 +35,12 @@ class NetteContainer implements Container
 	}
 
 
+	function setRequest(Request $m)
+	{
+		$this->getContainer()->addService('request', $m);
+		return $this;
+	}
+
 
 	/**
 	 * Name of application.
@@ -45,7 +51,7 @@ class NetteContainer implements Container
 		$name = isset($this->getContainer()->parameters['appname'])
 			? $this->getContainer()->parameters['appname']
 			: 'appname';
-		return Strings::webalize($name);
+		return $name;
 	}
 
 
@@ -91,19 +97,19 @@ class NetteContainer implements Container
 	 */
 	function getCommand($name)
 	{
+		$name = strtr($name, ':', '_');
 		try {
-			$name = strtr($name, ':', '_');
 			switch ($name) {
 				case 'version':
 					if ($this->getContainer()->hasService("command.{$name}")) {
 						return $this->getContainer()->getService("command.{$name}");
 					}
-					return $this->getVersionCommand();
+					return $this->createVersionCommand();
 				case 'help':
 					if ($this->getContainer()->hasService("command.{$name}")) {
 						return $this->getContainer()->getService("command.{$name}");
 					}
-					return $this->getHelpCommand();
+					return $this->createHelpCommand($this->getContainer()->getService("request"));
 				default:
 					return $this->getContainer()->getService("command.{$name}");
 			}
@@ -174,7 +180,9 @@ class NetteContainer implements Container
 	function getGenericSignature()
 	{
 		$sign = new OptionSignature();
-		$sign->addOption('working-dir|d', $sign::TYPE_TEXT, '.', 'If specified, use the given directory as working directory.');
+		$sign->addOption('working-dir|d', $sign::TYPE_TEXT, function() {
+			return self::formatRelativePath($this->getContainer()->getService('request'), getcwd());
+		}, 'If specified, use the given directory as working directory.');
 		return $sign;
 	}
 
@@ -226,16 +234,16 @@ class NetteContainer implements Container
 
 
 
-	private function getVersionCommand()
+	private function createVersionCommand()
 	{
 		return new VersionCommand($this->getOutput(), $this->getVersion());
 	}
 
 
 
-	private function getHelpCommand()
+	private function createHelpCommand($request)
 	{
-		return new HelpCommand($this->getOutput(), $this);
+		return new HelpCommand($this->getOutput(), $request, $this);
 	}
 
 
@@ -245,6 +253,18 @@ class NetteContainer implements Container
 		if (! file_exists($path)) {
 			throw new RuntimeException("Cannot switch to working directory `$path'.");
 		}
+	}
+
+
+	private static function formatRelativePath($request, $path)
+	{
+		if ($request->getWorkingDir() == $path) {
+			return '.';
+		}
+		if (Strings::startsWith($path, $request->getWorkingDir())) {
+			return '.' . substr($path, strlen($request->getWorkingDir()));
+		}
+		return $path;
 	}
 
 }

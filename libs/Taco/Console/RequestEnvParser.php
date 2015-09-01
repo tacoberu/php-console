@@ -37,7 +37,7 @@ class RequestEnvParser implements RequestParser
 		$pwd = self::parsePwd($env);
 		$program = array_shift($args);
 
-		$req = new Request($program);
+		$req = new Request($program, $pwd);
 		$req->addRawData($args);
 		$req->applyRules($this->getDefaultSignature());
 

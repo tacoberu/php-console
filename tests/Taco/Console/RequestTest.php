@@ -31,7 +31,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	function testEmptyWithDefault()
 	{
 		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
-		$req = new Request('foo');
+		$req = new Request('foo', '/home');
 
 		// Data může zvalidovat
 		$sig = new OptionSignature();
@@ -56,7 +56,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 				);
 
 		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
-		$req = new Request('foo');
+		$req = new Request('foo', '/home');
 
 		$req->addRawData($raw1);
 
@@ -84,7 +84,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 				);
 
 		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
-		$req = new Request('foo');
+		$req = new Request('foo', '/home');
 
 		$req->addRawData($raw1);
 
@@ -111,7 +111,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 				);
 
 		// Request reprezentuje vstupní data. Ta vůbec nemusí být najednou.
-		$req = new Request('foo');
+		$req = new Request('foo', '/home');
 
 		$req->addRawData($raw1);
 
@@ -156,7 +156,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	 */
 	function testPositionalArgument()
 	{
-		$req = new Request('foo');
+		$req = new Request('foo', '/home');
 		$req->addRawData(array(
 				'John',
 				'Dee',
@@ -186,7 +186,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	 */
 	function testPositionalArgument2()
 	{
-		$req = new Request('foo');
+		$req = new Request('foo', '/home');
 		$req->addRawData(array(
 				'John',
 				'--sep', ':',
@@ -215,7 +215,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	 */
 	function testPositionalArgument3()
 	{
-		$req = new Request('app');
+		$req = new Request('app', '/home');
 		$req->addRawData(array(
 				'-d', '../ddd',
 				'hello',
@@ -241,7 +241,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	{
 		$this->setExpectedException('RuntimeException', "Missing required options:\n  --name  [text]  ...");
 
-		$req = new Request('app');
+		$req = new Request('app', '/home');
 		$req->addRawData(array(
 				'-d', '../ddd',
 				'hello',
@@ -266,7 +266,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	function testValidateType()
 	{
 		$this->setExpectedException('UnexpectedValueException', "Option `age' has invalid type of value: `s55'. Except type: `int'.");
-		$req = new Request('app');
+		$req = new Request('app', '/home');
 		$req->addRawData(array(
 				's55',
 				));
@@ -289,7 +289,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	function testPositionalArgument4()
 	{
 		$this->setExpectedException('UnexpectedValueException', "Option `age' has invalid type of value: `age'. Except type: `int'.");
-		$req = new Request('app');
+		$req = new Request('app', '/home');
 		$req->addRawData(array(
 				'-d', '../ddd',
 				'--name', 'John',
@@ -310,7 +310,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	 */
 	function testPositionalArgument5()
 	{
-		$req = new Request('app');
+		$req = new Request('app', '/home');
 		$req->addRawData(array(
 				'--name3', 'Trois',
 				'--name5', 'Cinq',
@@ -348,7 +348,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	 */
 	function testNamedWithEq()
 	{
-		$req = new Request('app');
+		$req = new Request('app', '/home');
 		$req->addRawData(array(
 				'--name=Trois',
 				'--age', '55'
@@ -374,7 +374,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
 	 */
 	function testNamedWithEqComplex()
 	{
-		$req = new Request('app');
+		$req = new Request('app', '/home');
 		$req->addRawData(array(
 				'--name=--name=foo',
 				'--age', '55'
