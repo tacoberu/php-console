@@ -15,6 +15,7 @@ class HelpCommand implements Command
 
 	private $output;
 	private $request;
+	private $frontCommand;
 	private $container;
 
 
@@ -22,10 +23,11 @@ class HelpCommand implements Command
 	 * @param Output $output Where show documentation.
 	 * @param Container $container Source of list of commands.
 	 */
-	function __construct(Output $output, Request $request, Container $container)
+	function __construct(Output $output, Request $request, FrontCommand $fc, Container $container)
 	{
 		$this->output = $output;
 		$this->request = $request;
+		$this->frontCommand = $fc;
 		$this->container = $container;
 	}
 
@@ -88,7 +90,7 @@ class HelpCommand implements Command
 			'%{version}' => $this->container->getVersion(),
 			'%{author-name}' => $this->container->getAuthor(),
 			'%{author-email}' => $this->container->getAuthorEmail(),
-			'%{global-options}' => implode(PHP_EOL, self::formatOptionSignature($this->container->getGenericSignature())),
+			'%{global-options}' => implode(PHP_EOL, self::formatOptionSignature($this->frontCommand->getOptionSignature())),
 			'%{available-commands}' => implode(PHP_EOL, $commands),
 			)));
 	}

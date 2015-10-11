@@ -52,13 +52,13 @@ interface TransactiableCommand extends Command
 {
 
 	/**
-	 * Provede inicializaci a začne transakci.
+	 * Provede commit při úspěchu.
 	 */
-	function prepare();
+	function commit();
 
 
 	/**
-	 * Provede rollback při neuspěchu.
+	 * Provede rollback při neúspěchu.
 	 */
 	function rollback();
 }
@@ -98,6 +98,12 @@ interface Container
 
 
 	/**
+	 * @return Command FrontCommand with all dependencies.
+	 */
+	function getFrontCommand();
+
+
+	/**
 	 * @param string $name Name of command.
 	 * @return Command with all dependencies.
 	 */
@@ -126,29 +132,10 @@ interface Container
 
 
 	/**
-	 * Generic command as help, version, etc.
-	 * @return OptionSignature
-	 */
-	function getGenericSignature();
-
-
-	/**
 	 * Verze aplikace.
 	 * @return string like 0.0.1
 	 */
 	function getVersion();
-
-
-	/**
-	 * Prepare before execute.
-	 */
-	function beforeExecute(Options $options);
-
-
-	/**
-	 * Clean after execute.
-	 */
-	function afterExecute(Options $options);
 
 
 }

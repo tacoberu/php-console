@@ -3,14 +3,14 @@
 	"description": "PHP Commands a lightweight framework for creating PHP CLI scripts.",
 	"type": "library",
 	"require": {
-		"php" : ">=5.3.0",
+		"php" : ">=5.3.3",
 		"nette/bootstrap": "^2.3",
-		"tracy/tracy": "^2.3"
 	},
 	"require-dev": {
 		"php" : ">=5.3.0",
 		"phpunit/phpunit": "~4.0",
-		"janmarek/mockista": "^1.1"
+		"janmarek/mockista": "^1.1",
+		"tracy/tracy": "^2.3"
 	},
 	"authors": [
 		{

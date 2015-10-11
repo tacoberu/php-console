@@ -8,7 +8,7 @@ namespace Taco\Console;
 
 
 use Exception,
-	RuntimeException;
+	LogicException;
 
 
 class Runner
@@ -35,24 +35,28 @@ class Runner
 	function run(array $env)
 	{
 		try {
-			//~ $output = $this->container->getOutput();
-			$request = $this->parseFromEnv($env);
+			$request = $this->container->getRequestParser()->parse($env);
 			$this->container->setRequest($request);
-			$request->applyRules($this->getGenericSignature());
-			$command = $this->dispatchCommand($request);
+			$command = $this->container->getFrontCommand();
 			$request->applyRules($command->getOptionSignature());
-			$options = $request->getOptions();
-
-			$this->beforeExecute($options);
-			$flag = True;
-			$state = $command->execute($options);
-			$this->afterExecute($options);
-			return (int)$state;
+			switch (True) {
+				case $command instanceof TransactiableCommand:
+					try {
+						$state = $command->execute($request->getOptions());
+					}
+					catch (Exception $e) {
+						$command->rollback();
+						throw $e;
+					}
+					$command->commit();
+					return (int)$state;
+				case $command instanceof Command:
+					return (int)$command->execute($request->getOptions());
+				default:
+					throw new LogicException("Unsupported type of command: `" . get_class($command) . "'.");
+			}
 		}
 		catch (Exception $e) {
-			if (isset($flag)) {
-				$this->afterExecute($options);
-			}
 			if (isset($output)) {
 				$output->error($e->getMessage());
 			}
@@ -69,60 +73,12 @@ class Runner
 
 
 
-	/**
-	 * @return Request
-	 */
-	private function parseFromEnv(array $env)
-	{
-		$parser = $this->container->getRequestParser();
-		return $parser->parse($env);
-	}
-
-
-
-	/**
-	 * Výběr akce.
-	 * @param Request $request
-	 * @return Command
-	 */
-	private function dispatchCommand(Request $request)
-	{
-		if (! $request->getOption('command')) {
-			throw new RuntimeException("Not used command name. Try the command `help' to list all options.", 1);
-		}
-
-		return $this->container->getCommand($request->getOption('command'));
-	}
-
-
-
-	private function getGenericSignature()
-	{
-		return $this->container->getGenericSignature();
-	}
-
-
-
-	private function beforeExecute(Options $options)
-	{
-		return $this->container->beforeExecute($options);
-	}
-
-
-
-	private function afterExecute(Options $options)
-	{
-		return $this->container->afterExecute($options);
-	}
-
-
-
-	private static function assertType($type, $value)
+	private static function ___assertType($type, $value)
 	{
 		if ($value instanceof $type) {
 			return $value;
 		}
-		throw new RuntimeException("invalid return type");
+		throw new LogicException("Invalid type (`$type') of value.");
 	}
 
 }

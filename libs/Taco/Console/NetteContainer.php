@@ -35,15 +35,17 @@ class NetteContainer implements Container
 	}
 
 
+
 	function setRequest(Request $m)
 	{
-		$this->getContainer()->addService('request', $m);
+		$this->getContainer()->addService('console.request', $m);
 		return $this;
 	}
 
 
 	/**
 	 * Name of application.
+	 * @iterface Container
 	 * @return string
 	 */
 	function getApplicationName()
@@ -58,6 +60,7 @@ class NetteContainer implements Container
 
 	/**
 	 * Description of application.
+	 * @iterface Container
 	 * @return string
 	 */
 	function getApplicationDescription()
@@ -70,6 +73,7 @@ class NetteContainer implements Container
 
 
 	/**
+	 * @iterface Container
 	 * @return string
 	 */
 	function getAuthor()
@@ -80,7 +84,9 @@ class NetteContainer implements Container
 	}
 
 
+
 	/**
+	 * @iterface Container
 	 * @return string
 	 */
 	function getAuthorEmail()
@@ -91,38 +97,56 @@ class NetteContainer implements Container
 	}
 
 
+
+	/**
+	 * Můžeme to nahradit za jeden jedinej command. Protože všechny ostatní
+	 * jsou jeho potomci.
+	 *
+	 * @iterface Container
+	 * @return Command FrontCommand with all dependencies.
+	 */
+	function getFrontCommand()
+	{
+		return $this->getCommand('frontcommand');
+	}
+
+
+
 	/**
 	 * @param string $name Name of command.
+	 * @iterface Container
 	 * @return Command with all dependencies.
+	 * @TODO Odstranit ve prospěch FrontCommandu ?
 	 */
 	function getCommand($name)
 	{
 		$name = strtr($name, ':', '_');
-		try {
-			switch ($name) {
-				case 'version':
-					if ($this->getContainer()->hasService("command.{$name}")) {
-						return $this->getContainer()->getService("command.{$name}");
-					}
-					return $this->createVersionCommand();
-				case 'help':
-					if ($this->getContainer()->hasService("command.{$name}")) {
-						return $this->getContainer()->getService("command.{$name}");
-					}
-					return $this->createHelpCommand($this->getContainer()->getService("request"));
-				default:
+		switch ($name) {
+			case 'version':
+				if ($this->getContainer()->hasService("command.{$name}")) {
 					return $this->getContainer()->getService("command.{$name}");
-			}
-		}
-		catch (Nette\DI\MissingServiceException $e) {
-			throw new RuntimeException("Command `{$name}' not found.", 100, $e);
+				}
+				return $this->createDefaultVersionCommand();
+			case 'help':
+				if ($this->getContainer()->hasService("command.{$name}")) {
+					return $this->getContainer()->getService("command.{$name}");
+				}
+				return $this->createDefaultHelpCommand($this->getContainer()->getService("console.request"));
+			default:
+				try {
+					return $this->getContainer()->getService("command.{$name}");
+				}
+				catch (Nette\DI\MissingServiceException $e) {
+					throw new RuntimeException("Command `{$name}' not found.", 100, $e);
+				}
 		}
 	}
 
 
 
 	/**
-	 * Seznam všechn commandů, které jsou k dispozici.
+	 * Seznam všech commandů, které jsou k dispozici.
+	 * @iterface Container
 	 * @return array of Command
 	 */
 	function getCommandList()
@@ -133,6 +157,9 @@ class NetteContainer implements Container
 		$cmd = $this->getCommand('help');
 		$xs[$cmd->getName()] = $cmd;
 		foreach ($this->container->findByType('Taco\Console\Command') as $name) {
+			if ($name == 'frontcommand' || $name == 'command.frontcommand') {
+				continue;
+			}
 			$cmd = $this->container->getService($name);
 			$xs[$cmd->getName()] = $cmd;
 		}
@@ -142,6 +169,7 @@ class NetteContainer implements Container
 
 
 	/**
+	 * @iterface Container
 	 * @return Output
 	 */
 	function getOutput()
@@ -152,6 +180,7 @@ class NetteContainer implements Container
 
 
 	/**
+	 * @iterface Container
 	 * @return RequestParser
 	 */
 	function getRequestParser()
@@ -163,6 +192,7 @@ class NetteContainer implements Container
 
 	/**
 	 * Verze aplikace.
+	 * @iterface Container
 	 * @return string 0.0.1
 	 */
 	function getVersion()
@@ -170,36 +200,6 @@ class NetteContainer implements Container
 		return isset($this->getContainer()->parameters['version'])
 			? $this->getContainer()->parameters['version']
 			: '0.0.1';
-	}
-
-
-
-	/**
-	 * @return OptionSignature
-	 */
-	function getGenericSignature()
-	{
-		$sign = new OptionSignature();
-		$sign->addOption('working-dir|d', $sign::TYPE_TEXT, function() {
-			return self::formatRelativePath($this->getContainer()->getService('request'), getcwd());
-		}, 'If specified, use the given directory as working directory.');
-		return $sign;
-	}
-
-
-
-	function beforeExecute(Options $options)
-	{
-		self::assertPathExists($options->getOption('working-dir'));
-		$this->origWorkDir = getcwd();
-		chdir($options->getOption('working-dir'));
-	}
-
-
-
-	function afterExecute(Options $options)
-	{
-		chdir($this->origWorkDir);
 	}
 
 
@@ -229,42 +229,26 @@ class NetteContainer implements Container
 		$configurator = new Nette\Configurator;
 		$configurator->setTempDirectory($this->tempDir);
 		$configurator->addConfig($this->appconfigFile);
+		$configurator->addParameters(['foo' => 1]);
+		$configurator->addServices(['console.container' => $this]);
 		return $configurator->createContainer();
 	}
 
 
 
-	private function createVersionCommand()
+	private function createDefaultVersionCommand()
 	{
 		return new VersionCommand($this->getOutput(), $this->getVersion());
 	}
 
 
 
-	private function createHelpCommand($request)
+	private function createDefaultHelpCommand($request)
 	{
-		return new HelpCommand($this->getOutput(), $request, $this);
+		return new HelpCommand($this->getOutput(), $request, $this->getFrontCommand(), $this);
 	}
 
 
 
-	private static function assertPathExists($path)
-	{
-		if (! file_exists($path)) {
-			throw new RuntimeException("Cannot switch to working directory `$path'.");
-		}
-	}
-
-
-	private static function formatRelativePath($request, $path)
-	{
-		if ($request->getWorkingDir() == $path) {
-			return '.';
-		}
-		if (Strings::startsWith($path, $request->getWorkingDir())) {
-			return '.' . substr($path, strlen($request->getWorkingDir()));
-		}
-		return $path;
-	}
 
 }

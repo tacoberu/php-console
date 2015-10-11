@@ -7,6 +7,8 @@
 
 require_once __dir__ . '/../vendor/autoload.php';
 
+
+// TODO je celé nějaké zbytečné, ne?
 require_once __dir__ . '/Taco/Console/interfaces.php';
 require_once __dir__ . '/Taco/Console/Request.php';
 require_once __dir__ . '/Taco/Console/Options.php';
