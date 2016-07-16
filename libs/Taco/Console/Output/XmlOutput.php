@@ -16,12 +16,15 @@ class XmlOutput implements Output
 	private $stream;
 	private $root;
 	private $started = false;
+	private $formaters = [];
+	private $parser;
 
 
 	function __construct(Stream $stream, $root = 'output')
 	{
 		$this->root = $root;
 		$this->stream = $stream;
+		$this->parser = new MarkParser();
 	}
 
 
@@ -84,12 +87,27 @@ class XmlOutput implements Output
 
 
 	/**
+	 * @param string
+	 * @return string
+	 */
+	function translate($s)
+	{
+		$s = self::concat($this->parser->parse($s));
+		$s = str_replace('\\<', '&lt;', $s);
+		$s = htmlspecialchars(preg_replace('#[\x00-\x08\x0B\x0C\x0E-\x1F]+#', '', $s), ENT_QUOTES);
+		return $s;
+	}
+
+
+
+	/**
 	 * @param string notice | warning | error
 	 * @param string
 	 * @return string
 	 */
 	private function formatText($type, $content)
 	{
+		$content = $this->translate($content);
 		return "\t<{$type}>{$content}</{$type}>\n";
 	}
 
@@ -101,7 +119,63 @@ class XmlOutput implements Output
 	 */
 	private function formatData($type, Data $content)
 	{
-		die('dopsat formátování speciálních tříd jako je tabulka, seznam, a podobně.');
+		switch(True) {
+			case $content instanceof ListData:
+				return $this->getListDataFormater()->format($type, $content);
+			case $content instanceof DictData:
+				return $this->getDictDataFormater()->format($type, $content);
+			case $content instanceof TableData:
+				return $this->getTableDataFormater()->format($type, $content);
+			default:
+				die('dopsat formátování speciálních tříd jako je tabulka, seznam, a podobně.');
+		}
+	}
+
+
+
+	private function getListDataFormater()
+	{
+		if (empty($this->formaters['list'])) {
+			$this->formaters['list'] = new ListDataXmlFormat($this);
+		}
+		return $this->formaters['list'];
+	}
+
+
+
+	private function getDictDataFormater()
+	{
+		if (empty($this->formaters['dict'])) {
+			$this->formaters['dict'] = new DictDataXmlFormat($this);
+		}
+		return $this->formaters['dict'];
+	}
+
+
+
+	private function getTableDataFormater()
+	{
+		if (empty($this->formaters['table'])) {
+			$this->formaters['table'] = new TableDataXmlFormat($this);
+		}
+		return $this->formaters['table'];
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	private static function concat($xs)
+	{
+		$ret = '';
+		foreach ($xs as $x) {
+			if (is_object($x)) {
+				$x = self::concat($x->content);
+			}
+			$ret .= $x;
+		}
+		return $ret;
 	}
 
 }
