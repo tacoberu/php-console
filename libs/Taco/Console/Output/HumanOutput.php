@@ -14,11 +14,16 @@ class HumanOutput implements Output
 {
 
 	private $stream;
+	private $colors;
+	private $parser;
+	private $formaters = [];
 
 
-	function __construct(Stream $stream)
+	function __construct(Stream $stream, $colors = Null)
 	{
 		$this->stream = $stream;
+		$this->colors = new Colors();
+		$this->parser = new MarkParser();
 	}
 
 
@@ -69,7 +74,7 @@ class HumanOutput implements Output
 	 */
 	function translate($s)
 	{
-		return $s;
+		return self::concat($this->colors, $this->parser->parse($s));
 	}
 
 
@@ -93,7 +98,64 @@ class HumanOutput implements Output
 	 */
 	private function formatData($type, Data $content)
 	{
-		die('dopsat formátování speciálních tříd jako je tabulka, seznam, a podobně.');
+		switch(True) {
+			case $content instanceof ListData:
+				return $this->getListDataFormater()->format($type, $content);
+			case $content instanceof DictData:
+				return $this->getDictDataFormater()->format($type, $content);
+			case $content instanceof TableData:
+				return $this->getTableDataFormater()->format($type, $content);
+			default:
+				die('dopsat formátování speciálních tříd jako je tabulka, seznam, a podobně.');
+		}
+	}
+
+
+
+	private function getListDataFormater()
+	{
+		if (empty($this->formaters['list'])) {
+			$this->formaters['list'] = new ListDataHumanFormat($this);
+		}
+		return $this->formaters['list'];
+	}
+
+
+
+	private function getDictDataFormater()
+	{
+		if (empty($this->formaters['dict'])) {
+			$this->formaters['dict'] = new DictDataHumanFormat($this);
+		}
+		return $this->formaters['dict'];
+	}
+
+
+
+	private function getTableDataFormater()
+	{
+		if (empty($this->formaters['table'])) {
+			$this->formaters['table'] = new TableDataHumanFormat($this);
+		}
+		return $this->formaters['table'];
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	private static function concat($colors, $xs)
+	{
+		$ret = '';
+		foreach ($xs as $x) {
+			if (is_object($x)) {
+				$style = (object)array_merge(['fg' => Null, 'bg' => Null, 'opt' => Null], (array)$x->style);
+				$x = $colors->apply(self::concat($colors, $x->content), $style->fg, $style->bg, $style->opt);
+			}
+			$ret .= $x;
+		}
+		return $ret;
 	}
 
 }
