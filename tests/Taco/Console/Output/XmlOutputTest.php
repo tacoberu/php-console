@@ -9,6 +9,7 @@ namespace Taco\Console;
 
 require_once __dir__ . '/../../../../vendor/autoload.php';
 require_once __dir__ . '/../../../../libs/Taco/Console/interfaces.php';
+require_once __dir__ . '/../../../../libs/Taco/Console/Output/Stream.php';
 require_once __dir__ . '/../../../../libs/Taco/Console/Output/XmlOutput.php';
 
 
@@ -69,7 +70,7 @@ class XmlOutputTest extends PHPUnit_Framework_TestCase
 	function testNoticeInvalid()
 	{
 		$this->expectOutputString("<output>
-	<notice>! invalid output: `DateTime'</notice>
+	<notice>! invalid output: `DateTime&#039;</notice>
 </output>\n");
 		$x = new XmlOutput(new Stream());
 		$x->notice(new \DateTime());
@@ -80,7 +81,7 @@ class XmlOutputTest extends PHPUnit_Framework_TestCase
 	function testErrorInvalid()
 	{
 		$this->expectOutputString("<output>
-	<error>! invalid output: `DateTime'</error>
+	<error>! invalid output: `DateTime&#039;</error>
 </output>\n");
 		$x = new XmlOutput(new Stream());
 		$x->error(new \DateTime());
