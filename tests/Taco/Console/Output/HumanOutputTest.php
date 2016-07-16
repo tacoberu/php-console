@@ -9,6 +9,7 @@ namespace Taco\Console;
 
 require_once __dir__ . '/../../../../vendor/autoload.php';
 require_once __dir__ . '/../../../../libs/Taco/Console/interfaces.php';
+require_once __dir__ . '/../../../../libs/Taco/Console/Output/Stream.php';
 require_once __dir__ . '/../../../../libs/Taco/Console/Output/HumanOutput.php';
 
 
