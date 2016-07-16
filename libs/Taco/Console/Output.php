@@ -4,7 +4,7 @@
  * @author     Martin Takáč (martin@takac.name)
  */
 
-namespace Taco\Commands;
+namespace Taco\Console;
 
 
 /**
@@ -15,7 +15,13 @@ class Output
 
 	function notice($content)
 	{
-		echo $content;
+		echo $content . PHP_EOL;
+	}
+
+
+	function error($content)
+	{
+		echo $content . PHP_EOL;
 	}
 
 }
