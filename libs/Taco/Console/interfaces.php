@@ -116,6 +116,29 @@ interface RequestParser
 
 
 /**
+ * Zpracování vstupních parametrů.
+ * @author Martin Takáč <martin@takac.name>
+ */
+interface Output
+{
+
+	/**
+	 * @param string|Formatable $content
+	 */
+	function notice($content);
+
+
+
+	/**
+	 * @param string|Formatable $content
+	 */
+	function error($content);
+
+}
+
+
+
+/**
  * Formátovaná data do výstupu.
  * @author Martin Takáč <martin@takac.name>
  */
