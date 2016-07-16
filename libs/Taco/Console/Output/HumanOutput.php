@@ -64,17 +64,33 @@ class HumanOutput implements Output
 
 
 	/**
+	 * @param string
+	 * @return string
+	 */
+	function translate($s)
+	{
+		return $s;
+	}
+
+
+
+	/**
 	 * @param string notice | warning | error
 	 * @param string
 	 * @return string
 	 */
 	private function formatText($type, $content)
 	{
-		return $content . "\n";
+		return $this->translate($content) . "\n";
 	}
 
 
 
+	/**
+	 * @param string notice | warning | error
+	 * @param Data
+	 * @return string
+	 */
 	private function formatData($type, Data $content)
 	{
 		die('dopsat formátování speciálních tříd jako je tabulka, seznam, a podobně.');
