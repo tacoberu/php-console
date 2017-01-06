@@ -48,4 +48,15 @@ class OptionsTest extends PHPUnit_Framework_TestCase
 		$opt->getOption('foo');
 	}
 
+
+
+	function testArrayOffset()
+	{
+		$opt = new Options(['name' => 'John', 'surname' => 'Dee', 'bool' => false, 'empty' => Null]);
+		$this->assertSame('John', $opt['name']);
+		$this->assertSame('Dee', $opt['surname']);
+		$this->assertFalse($opt['bool']);
+		$this->assertNull($opt['empty']);
+	}
+
 }

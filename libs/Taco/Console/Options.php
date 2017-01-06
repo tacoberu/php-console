@@ -6,27 +6,29 @@
 
 namespace Taco\Console;
 
-
-use InvalidArgumentException;
+use ArrayAccess;
+use InvalidArgumentException,
+	LogicException;
 
 
 /**
  * Seznam zpracovaných vstupních hodnot. To je to, co dostane command.
  */
-class Options
+class Options implements ArrayAccess
 {
 
 	/**
 	 * Volba a hodnota předaná z CLI.
 	 */
-	private $options = array();
+	private $items = array();
 
 
 
 	function __construct(array $args)
 	{
-		$this->options = $args;
+		$this->items = $args;
 	}
+
 
 
 	/**
@@ -35,12 +37,57 @@ class Options
 	 */
 	function getOption($name)
 	{
-		if (array_key_exists($name, $this->options)) {
-			return $this->options[$name];
+		if (array_key_exists($name, $this->items)) {
+			return $this->items[$name];
 		}
 
 		throw new InvalidArgumentException("Option `$name' not found.");
 	}
 
+
+
+	/**
+	 * @return array
+	 */
+	function asArray()
+	{
+		return $this->items;
+	}
+
+
+
+	/**
+	 * Returns a item.
+	 * @return mixed
+	 */
+	function offsetGet($name)
+	{
+		return $this->getOption($name);
+	}
+
+
+
+	/**
+	 * Determines whether a item exists.
+	 * @return bool
+	 */
+	function offsetExists($name)
+	{
+		return array_key_exists($name, $this->items);
+	}
+
+
+
+	function offsetSet($key, $value)
+	{
+		throw new LogicException("Method `set` is not supported.");
+	}
+
+
+
+	function offsetUnset($key)
+	{
+		throw new LogicException("Method `unset` is not supported.");
+	}
 
 }
