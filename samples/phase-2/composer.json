@@ -1,0 +1,9 @@
+{
+	"name": "tacoberu/php-console-sample",
+	"repositories": [
+		{	"type": "vcs", "url": "git://github.com/tacoberu/php-console" }
+	],
+	"require": {
+		"tacoberu/php-console": "^0.1.0"
+	}
+}
