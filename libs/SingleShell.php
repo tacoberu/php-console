@@ -67,6 +67,14 @@ class SingleShell
 		}
 
 		foreach ($refl->getParameters() as $index => $parm) {
+			if ( ! isset($args[$index])) {
+				$args[$index] = [
+					$parm->isOptional() ? 'optional' : 'required',
+					$parm->getName(),
+					'string',
+					'~',
+				];
+			}
 			if ($parm->isOptional() && isset($args[$index])) {
 				$args[$index][4] = $parm->getDefaultValue();
 			}
