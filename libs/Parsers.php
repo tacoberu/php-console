@@ -131,6 +131,8 @@ class Parsers
 				$ret = self::parseAnnotationRow($src);
 				array_unshift($ret, 'optional');
 				return $ret;
+			case (substr($src, 0, 7) == '@author'):
+				return ['author', trim(substr($src, 7))];
 		}
 		throw new RuntimeException("Unsupported annotation: `$src'.");
 	}

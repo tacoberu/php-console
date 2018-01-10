@@ -173,6 +173,11 @@ class ParsersTest extends PHPUnit_Framework_TestCase
 				['required', 'desc', 'string', "doc comment to more rows\n and more..."],
 				['optional', 'limit', 'int', 'doc limit comment']
 				]],
+			["/**\n"
+			. "\t * @author abc def\nghch\n"
+			. "\t */", [
+				['author', 'abc def ghch']
+				]],
 		];
 	}
 

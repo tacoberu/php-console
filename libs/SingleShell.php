@@ -64,6 +64,13 @@ class SingleShell
 				case 'optional':
 					$signature->addArgumentDefault($def[1], TypeUtils::parseType($def[2]), $def[4], $def[3]);
 					break;
+				case 'author':
+					if ( ! isset($options['authors'])) {
+						$options['authors'] = [];
+					}
+					$options['authors'][] = $def[1];
+					$options['authors'] = array_unique($options['authors']);
+					break;
 				default:
 					throw new RuntimeException("Unsupported type: `{$def[1]}'.");
 			}
