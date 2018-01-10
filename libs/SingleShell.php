@@ -44,11 +44,31 @@ class SingleShell
 	static function create($closure, $version = '0.1', array $options = array())
 	{
 		$refl = new ReflectionFunction($closure);
-		$args = Parsers::parseSignatureFromDocComment($refl->getDocComment());
+		$args = [];
+		foreach (Parsers::parseSignatureFromDocComment($refl->getDocComment()) as $def) {
+			switch ($def[0]) {
+				case 'required':
+				case 'optional':
+					$args[] = $def;
+					break;
+				case 'author':
+					if ( ! isset($options['authors'])) {
+						$options['authors'] = [];
+					}
+					$options['authors'][] = $def[1];
+					$options['authors'] = array_unique($options['authors']);
+					break;
+				case 'description':
+					$options['description'] = $def[1];
+					break;
+				default:
+					throw new RuntimeException("Unsupported type: `{$def[0]}'.");
+			}
+		}
 
 		foreach ($refl->getParameters() as $index => $parm) {
-			if ($parm->isOptional()) {
-				$args[$index][] = $parm->getDefaultValue();
+			if ($parm->isOptional() && isset($args[$index])) {
+				$args[$index][4] = $parm->getDefaultValue();
 			}
 		}
 
@@ -64,15 +84,8 @@ class SingleShell
 				case 'optional':
 					$signature->addArgumentDefault($def[1], TypeUtils::parseType($def[2]), $def[4], $def[3]);
 					break;
-				case 'author':
-					if ( ! isset($options['authors'])) {
-						$options['authors'] = [];
-					}
-					$options['authors'][] = $def[1];
-					$options['authors'] = array_unique($options['authors']);
-					break;
 				default:
-					throw new RuntimeException("Unsupported type: `{$def[1]}'.");
+					throw new RuntimeException("Unsupported type: `{$def[0]}'.");
 			}
 		}
 

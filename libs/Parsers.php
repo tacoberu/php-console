@@ -93,13 +93,13 @@ class Parsers
 			// volný text patřící předchozí anotaci
 			if ($x{0} !== '@') {
 				if ($prev > -1) {
-					$xs[$prev] .= ' ' . $x;
+					$xs[$prev] .= ' ' . trim($x);
+					unset($xs[$i]);
+					continue;
 				}
 				else {
-					//~ $description = $x;
+					$xs[$i] = '@description ' . trim($x);
 				}
-				unset($xs[$i]);
-				continue;
 			}
 			$prev = $i;
 		}
@@ -133,6 +133,8 @@ class Parsers
 				return $ret;
 			case (substr($src, 0, 7) == '@author'):
 				return ['author', trim(substr($src, 7))];
+			case (substr($src, 0, 12) == '@description'):
+				return ['description', trim(substr($src, 12))];
 		}
 		throw new RuntimeException("Unsupported annotation: `$src'.");
 	}

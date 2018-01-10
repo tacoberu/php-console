@@ -178,6 +178,23 @@ class ParsersTest extends PHPUnit_Framework_TestCase
 			. "\t */", [
 				['author', 'abc def ghch']
 				]],
+			["/**\n"
+			. "\t * Lorem ipsum doler ist.\n"
+			. "\t * \n"
+			. "\t * @author abc def\nghch\n"
+			. "\t */", [
+				['description', 'Lorem ipsum doler ist.'],
+				['author', 'abc def ghch'],
+				]],
+			["/**\n"
+			. "\t * Lorem ipsum doler ist. \n"
+			. "\t * Elesias an sotes. \n"
+			. "\t * \n"
+			. "\t * @author abc def\nghch\n"
+			. "\t */", [
+				['description', 'Lorem ipsum doler ist. Elesias an sotes.'],
+				['author', 'abc def ghch'],
+				]],
 		];
 	}
 
