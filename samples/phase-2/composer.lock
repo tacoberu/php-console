@@ -1,0 +1,62 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "ee6d047d0795577148ba3b21c3617d06",
+    "packages": [
+        {
+            "name": "tacoberu/php-console",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tacoberu/php-console.git",
+                "reference": "82f13cb5a2f52fd08d8828525f095185f7687180"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tacoberu/php-console/zipball/82f13cb5a2f52fd08d8828525f095185f7687180",
+                "reference": "82f13cb5a2f52fd08d8828525f095185f7687180",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "janmarek/mockista": "^1.1",
+                "phpunit/phpunit": "~4.0",
+                "tracy/tracy": "^2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "libs/"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Takáč",
+                    "email": "martin@takac.name"
+                }
+            ],
+            "description": "Feature-rich command line parser for PHP",
+            "support": {
+                "source": "https://github.com/tacoberu/php-console/tree/v0.1.0",
+                "issues": "https://github.com/tacoberu/php-console/issues"
+            },
+            "time": "2018-01-02T03:21:25+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

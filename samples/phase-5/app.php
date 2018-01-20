@@ -1,20 +1,16 @@
-#!/usr/bin/env php
+#!/bin/env php
 <?php
 /**
- * @copyright 2016 Martin Takáč (http://martin.takac.name)
- * @license   https://opensource.org/licenses/MIT MIT
+ * use php app.php --limit=50 app.php out.log
  */
-
-if (@!include __DIR__ . '/../../../vendor/autoload.php') {
-	echo 'Install Application using `composer install`';
+if (@!include __DIR__ . '/vendor/autoload.php') {
+	echo "Install packages using `composer install`!\n";
 	exit(1);
 }
 
-require __dir__ . '/commands/HelloCommand.php';
+require __dir__ . '/vendor/autoload.php';
 
-use Taco\Console\AppFactory;
-
-$app = AppFactory::create('0.0.1',
+$app = Taco\Console\AppFactory::create('0.0.1',
 	'greating',
 	'Ukázková aplikace. Smyslem je, definovat commandy bez žádného dalšího okecávání.
 
