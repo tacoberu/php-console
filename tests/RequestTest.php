@@ -7,6 +7,7 @@
 namespace Taco\Console;
 
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 
 
 /**
@@ -384,6 +385,24 @@ class RequestTest extends PHPUnit_Framework_TestCase
 			'name' => "--name=foo",
 			'age' => 55,
 		]), $req->getOptions());
+	}
+
+
+
+	function testIllegalOption()
+	{
+		$this->setExpectedException(RuntimeException::class, "Illegal option – `xyz'.");
+		$req = new Request('app', '/home');
+		$req->addRawData(array(
+			'--age', '55'
+		));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('age', $sig::TYPE_INT, '...');
+
+		$req->applyRules($sig);
+
+		$req->getOption('xyz');
 	}
 
 

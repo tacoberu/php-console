@@ -211,6 +211,7 @@ class Request
 	 */
 	function isFilledOption($name)
 	{
+		TypeUtils::assert($name, 'string:1..');
 		return array_key_exists($name, $this->args);
 	}
 
@@ -222,6 +223,11 @@ class Request
 	 */
 	function getOption($name)
 	{
+		TypeUtils::assert($name, 'string:1..');
+		if ( ! $this->signature->getOption($name)) {
+			throw new RuntimeException("Illegal option – `{$name}'.");
+		}
+
 		if ( ! array_key_exists($name, $this->args)) {
 			throw new RuntimeException("Missing required option:\n" . self::formatOption($this->signature->getOption($name)));
 		}
