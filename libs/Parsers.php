@@ -72,7 +72,7 @@ class Parsers
 		}
 
 		// Odříznout počáteční a koncové hvězdičky. Rozdělit na řádky.
-		$xs = split("\n", trim(substr($src, 3, -2)));
+		$xs = explode("\n", trim(substr($src, 3, -2)));
 
 		// Odstranit počáteční odsazení.
 		$xs = array_map(function($x) {
