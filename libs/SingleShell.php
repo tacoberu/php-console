@@ -83,6 +83,7 @@ class SingleShell
 		$signature = new OptionSignature();
 		$signature->addFlag('help|h', 'Display this help message');
 		$signature->addFlag('version|V', 'Display the application version');
+		$signature->addFlag('trace', 'Display the error trace of application.');and');
 
 		foreach ($args as $def) {
 			switch ($def[0]) {
@@ -146,6 +147,9 @@ class SingleShell
 			}
 			else {
 				echo "Error: {$e->getMessage()}\n";
+			}
+			if ($request->getOption('trace')) {
+				throw $e;
 			}
 			return ($e->getCode() > 0 ? $e->getCode() : self::STATE_UNKNOWN_ERROR);
 		}
