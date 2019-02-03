@@ -48,6 +48,7 @@ class Runner
 
 			$parser = reset(self::assertEmpty($this->container->findByType(RequestParser::class), RequestParser::class));
 			$request = $parser->parse($env);
+			$request->applyRules($this->buildCommandOptionSignature($defaultcommand));
 
 			$this->container->addInstance($request);
 
@@ -126,6 +127,7 @@ class Runner
 
 
 	// -- PRIVATE ------------------------------------------------------
+
 
 
 	private function buildCommandOptionSignature($defaultcommand = null)

@@ -277,6 +277,16 @@ class Request
 
 
 
+	/**
+	 * @return string
+	 */
+	function getOptionSignature()
+	{
+		return $this->signature;
+	}
+
+
+
 	// -- PRIVATE ------------------------------------------------------
 
 
