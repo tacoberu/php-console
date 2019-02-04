@@ -12,19 +12,29 @@ use InvalidArgumentException;
 class RequestEnvParser implements RequestParser
 {
 
-	private $defaultcommand;
+	private $signature;
 
 
-	/**
-	 * @param string $defaultcommand Make default signature with first argument
-	 * as command name. If unnused, set this value.
-	 */
-	function __construct($defaultcommand = Null)
+	static function createCommanded($default = Null)
 	{
-		if ($defaultcommand !== Null) {
-			TypeUtils::assert($defaultcommand, 'string:1..');
+		$sig = new OptionSignature();
+		if ($default) {
+			$sig->addArgumentDefault('command', $sig::TYPE_TEXT, $default, 'The command name');
 		}
-		$this->defaultcommand = $defaultcommand;
+		else {
+			$sig->addArgument('command', $sig::TYPE_TEXT, 'The command name');
+		}
+		$sig->addFlag('trace', 'Display the error trace of application.');
+		//~ $sig->addArgumentDefault('working-dir', $sig::TYPE_TEXT, $pwd, 'If specified, use the given directory as working directory.');
+
+		return new static($sig);
+	}
+
+
+
+	function __construct(OptionSignature $signature = Null)
+	{
+		$this->signature = $signature;
 	}
 
 
@@ -46,7 +56,9 @@ class RequestEnvParser implements RequestParser
 
 		$req = new Request($program, $pwd);
 		$req->addRawData($args);
-		$req->applyRules($this->createDefaultSignature($pwd));
+		if ($this->signature) {
+			$req->applyRules($this->signature);
+		}
 
 		return $req;
 	}
@@ -54,20 +66,6 @@ class RequestEnvParser implements RequestParser
 
 
 	// -- PRIVATE ------------------------------------------------------
-
-
-
-	private function createDefaultSignature($pwd)
-	{
-		$sig = new OptionSignature();
-		if ($this->defaultcommand) {
-			$sig->addArgumentDefault('command', $sig::TYPE_TEXT, $this->defaultcommand, 'The command name');
-		}
-		else {
-			$sig->addArgument('command', $sig::TYPE_TEXT, 'The command name');
-		}
-		return $sig;
-	}
 
 
 

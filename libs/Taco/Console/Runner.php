@@ -48,7 +48,7 @@ class Runner
 
 			$parser = reset(self::assertEmpty($this->container->findByType(RequestParser::class), RequestParser::class));
 			$request = $parser->parse($env);
-			$request->applyRules($this->buildCommandOptionSignature($defaultcommand));
+//			$request->applyRules($this->buildCommandOptionSignature($defaultcommand));
 
 			$this->container->addInstance($request);
 
@@ -64,16 +64,7 @@ class Runner
 				}
 			}
 
-			// @TODO Samozřejmě nemůže být jen první. Co když je jich více? Co když jsou stromově zanořené?
-			foreach (self::assertEmpty($this->container->findByType(Command::class), Command::class) as $def) {
-				if ($def->getMetaInfo()->name === $request->getOption('command')) {
-					$command = $def;
-					break;
-				}
-			}
-			if ( ! isset($command)) {
-				throw new LogicException("Command not found.");
-			}
+			$command = $this->resolveCommand($request);
 			$request->applyRules($command->getOptionSignature());
 
 			$args = $request->getOptions()->asArray();
@@ -127,6 +118,19 @@ class Runner
 
 
 	// -- PRIVATE ------------------------------------------------------
+
+
+
+	private function resolveCommand(Request $request)
+	{
+		// @TODO Samozřejmě nemůže být jen první. Co když je jich více? Co když jsou stromově zanořené?
+		foreach (self::assertEmpty($this->container->findByType(Command::class), Command::class) as $def) {
+			if ($def->getMetaInfo()->name === $request->getOption('command')) {
+				return $def;
+			}
+		}
+		throw new LogicException("Command `" . $request->getOption('command') . "' not found.");
+	}
 
 
 

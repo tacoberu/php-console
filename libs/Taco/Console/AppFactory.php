@@ -28,10 +28,7 @@ class AppFactory
 		}, $authors));
 		$container->addInstance(new HumanOutput(new Stream()));
 		$container->addInstance(new XmlOutput(new Stream()));
-		$container->addInstance(new RequestEnvParser('help'));
-
-		// @TODO Chceme nějaké optiony pro všechny.
-		//$container->addOption('trace', "Display the error trace of application.");
+		$container->addInstance(RequestEnvParser::createCommanded('help'));
 
 		return new self($container);
 	}
