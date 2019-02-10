@@ -179,6 +179,33 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 
 
 
+	function testDefaultWorkingDir()
+	{
+		$req = $this->getDefaultParser()->parse([
+			'argv' => [ "samples/a/src/app", "-a", "45", "Martin", '--working-dir', '/temp', ],
+			'argc' => 5,
+			'_SERVER' => [
+				'PWD' => '/home/foo/projects',
+			],
+		]);
+
+		$sign = new OptionSignature();
+		$sign->addArgument('name|n', $sign::TYPE_TEXT, 'Jméno koho pozdravím.');
+		$sign->addArgument('age|a', $sign::TYPE_INT, 'Věk koho pozdravím.');
+		$req->applyRules($sign);
+
+		$this->assertFalse($req->isMissingRules(), 'Vše zpracováno.');
+
+		$this->assertOptions([
+			'age' => 45,
+			'name' => 'Martin',
+			'trace' => false,
+			'working-dir' => '/temp',
+		], $req);
+	}
+
+
+
 	function testWorkingDir()
 	{
 		$req = $this->getCommandParser()->parse([
@@ -390,6 +417,13 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 	private function getCommandParser($default = Null)
 	{
 		return RequestEnvParser::createCommanded($default);
+	}
+
+
+
+	private function getDefaultParser()
+	{
+		return RequestEnvParser::createDefault();
 	}
 
 

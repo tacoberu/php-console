@@ -15,6 +15,19 @@ class RequestEnvParser implements RequestParser
 	private $signature;
 
 
+	static function createDefault()
+	{
+		$sig = new OptionSignature();
+		$sig->addFlag('trace', 'Display the error trace of application.');
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function($r) {
+			return $r->getWorkingDir();
+		}, 'If specified, use the given directory as working directory.');
+
+		return new static($sig);
+	}
+
+
+
 	static function createCommanded($default = Null)
 	{
 		$sig = new OptionSignature();
