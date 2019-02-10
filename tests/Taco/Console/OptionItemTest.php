@@ -24,7 +24,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('bool', (string)$item->getType());
 		$this->assertEquals('desc', $item->getDescription());
 		$this->assertTrue($item->hasDefaultValue());
-		$this->assertFalse($item->getDefaultValue());
+		$this->assertFalse($item->getDefaultValue(new Request('a', 'b')));
 		$this->assertEquals(0, $item->getValence());
 	}
 
@@ -38,7 +38,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('text', $item->getType());
 		$this->assertEquals('desc', $item->getDescription());
 		$this->assertFalse($item->hasDefaultValue());
-		$this->assertNull($item->getDefaultValue());
+		$this->assertNull($item->getDefaultValue(new Request('a', 'b')));
 		$this->assertEquals('lorem ipsum', $item->parse('lorem ipsum'));
 		$this->assertEquals(1, $item->getValence());
 	}
@@ -53,7 +53,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('int', $item->getType());
 		$this->assertEquals('desc', $item->getDescription());
 		$this->assertFalse($item->hasDefaultValue());
-		$this->assertNull($item->getDefaultValue());
+		$this->assertNull($item->getDefaultValue(new Request('a', 'b')));
 		$this->assertSame(54, $item->parse('54'));
 		$this->assertEquals(1, $item->getValence());
 	}
@@ -68,7 +68,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('float', $item->getType());
 		$this->assertEquals('desc', $item->getDescription());
 		$this->assertFalse($item->hasDefaultValue());
-		$this->assertNull($item->getDefaultValue());
+		$this->assertNull($item->getDefaultValue(new Request('a', 'b')));
 		$this->assertEquals(1, $item->getValence());
 		$this->assertSame(54.0, $item->parse('54'));
 		$this->assertSame(54.4, $item->parse('54.4'));
@@ -84,7 +84,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('bool', $item->getType());
 		$this->assertEquals('desc', $item->getDescription());
 		$this->assertFalse($item->hasDefaultValue());
-		$this->assertNull($item->getDefaultValue());
+		$this->assertNull($item->getDefaultValue(new Request('a', 'b')));
 		$this->assertEquals(1, $item->getValence());
 		$this->assertSame(true, $item->parse('true'));
 		$this->assertSame(true, $item->parse('on'));
@@ -109,7 +109,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('male|female', (string)$item->getType());
 		$this->assertEquals(1, $item->getValence());
 		$this->assertFalse($item->hasDefaultValue());
-		$this->assertNull($item->getDefaultValue());
+		$this->assertNull($item->getDefaultValue(new Request('a', 'b')));
 		$this->assertSame('male', $item->parse('male'));
 	}
 
@@ -120,7 +120,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$item = new ConstraintOptionItem(new TypeInt, 'flg', 'desc');
 		$item->setDefaultValue(42);
 		$this->assertTrue($item->hasDefaultValue());
-		$this->assertEquals(42, $item->getDefaultValue());
+		$this->assertEquals(42, $item->getDefaultValue(new Request('a', 'b')));
 	}
 
 
@@ -130,7 +130,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 		$item = new ConstraintOptionItem(new TypeInt, 'flg', 'desc');
 		$item->setDefaultValue('42');
 		$this->assertTrue($item->hasDefaultValue());
-		$this->assertEquals(42, $item->getDefaultValue());
+		$this->assertEquals(42, $item->getDefaultValue(new Request('a', 'b')));
 	}
 
 
@@ -142,7 +142,7 @@ class OptionItemTest extends PHPUnit_Framework_TestCase
 			return 42;
 		});
 		$this->assertTrue($item->hasDefaultValue());
-		$this->assertEquals(42, $item->getDefaultValue());
+		$this->assertEquals(42, $item->getDefaultValue(new Request('a', 'b')));
 	}
 
 

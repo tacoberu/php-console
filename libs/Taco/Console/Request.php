@@ -98,7 +98,7 @@ class Request
 		$this->signature->merge($signature);
 
 		// Defaultní hodnoty
-		$this->args = array_merge($signature->getDefaultValues(), $this->args);
+		$this->args = array_merge($signature->getDefaultValues($this), $this->args);
 
 		// Vyzobat
 		$tail = array();

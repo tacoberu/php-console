@@ -65,12 +65,12 @@ class HelpCommand implements Command
 
 		// Global options
 		$items = DictData::create('<fg=yellow>Global options:</>');
-		$this->output->notice(self::formatOptionSignature($request->getOptionSignature(), '<fg=yellow>Global options:</>'));
+		$this->output->notice(self::formatOptionSignature($request->getOptionSignature(), $request, '<fg=yellow>Global options:</>'));
 
 		// Available commands
 		$items = DictData::create('<fg=yellow>Available commands:</>');
 		foreach ($this->container->findByType(Command::class) as $command) {
-			list($name, $desc, $args) = self::formatCommand($command);
+			list($name, $desc, $args) = self::formatCommand($command, $request);
 			$items->add("<fg=green>$name</>", $desc, $args);
 		}
 		$this->output->notice($items);
@@ -97,9 +97,9 @@ class HelpCommand implements Command
 	/**
 	 * @return string
 	 */
-	private static function formatCommand(DescribedCommand $command)
+	private static function formatCommand(DescribedCommand $command, Request $request)
 	{
-		$options = self::formatOptionSignature($command->getOptionSignature(), Null, 4);
+		$options = self::formatOptionSignature($command->getOptionSignature(), $request, Null, 4);
 		if ( ! $options->getItems()) {
 			$options = NULL;
 		}
@@ -111,11 +111,11 @@ class HelpCommand implements Command
 	/**
 	 * @return list of string
 	 */
-	private static function formatOptionSignature(OptionSignature $sign, $groupName = Null, $pad = 2)
+	private static function formatOptionSignature(OptionSignature $sign, Request $request, $groupName = Null, $pad = 2)
 	{
 		$options = DictData::create($groupName);
 		foreach ($sign->getOptionNames() as $name) {
-			list($name, $desc) = self::formatOption($sign->getOption($name), 2);
+			list($name, $desc) = self::formatOption($sign->getOption($name), $request, 2);
 			$options->add("<fg=green>$name</>", $desc);
 		}
 		return $options;
@@ -126,12 +126,12 @@ class HelpCommand implements Command
 	/**
 	 * @return string
 	 */
-	private static function formatOption(OptionItem $opt, $pad = 0, $space = 14)
+	private static function formatOption(OptionItem $opt, Request $request, $pad = 0, $space = 14)
 	{
 		return ['--' . $opt->getName(), sprintf("%-6s %s%s",
 				'[' . $opt->getType() . ']',
 				$opt->getDescription(),
-				self::formatDefaultValue($opt)
+				self::formatDefaultValue($opt, $request)
 				)];
 	}
 
@@ -140,9 +140,9 @@ class HelpCommand implements Command
 	/**
 	 * @return string
 	 */
-	private static function formatDefaultValue(OptionItem $opt)
+	private static function formatDefaultValue(OptionItem $opt, Request $request)
 	{
-		if ($val = $opt->getDefaultValue()) {
+		if ($val = $opt->getDefaultValue($request)) {
 			return " <fg=yellow>[default: " . self::escape($val, $opt->getType()) . "]</>";
 		}
 	}

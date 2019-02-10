@@ -228,17 +228,17 @@ class OptionSignature
 	 * Seznam všech defaultních hodnot.
 	 * @return array
 	 */
-	function getDefaultValues()
+	function getDefaultValues(Request $r)
 	{
 		$xs = array();
 		foreach ($this->arguments as $opt) {
 			if ($opt->hasDefaultValue()) {
-				$xs[$opt->getName()] = $opt->getDefaultValue();
+				$xs[$opt->getName()] = $opt->getDefaultValue($r);
 			}
 		}
 		foreach ($this->options as $opt) {
 			if ($opt->hasDefaultValue()) {
-				$xs[$opt->getName()] = $opt->getDefaultValue();
+				$xs[$opt->getName()] = $opt->getDefaultValue($r);
 			}
 		}
 		return $xs;

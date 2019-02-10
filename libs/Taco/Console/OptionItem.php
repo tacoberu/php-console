@@ -136,11 +136,11 @@ abstract class OptionItem
 
 
 
-	function getDefaultValue()
+	function getDefaultValue(Request $r)
 	{
 		if (is_callable($this->defaultValue)) {
 			$cb = $this->defaultValue;
-			return $cb();
+			return $cb($r);
 		}
 		return $this->defaultValue;
 	}

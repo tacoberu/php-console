@@ -70,6 +70,7 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 		$this->assertOptions([
 			'command' => 'help',
 			'trace' => false,
+			'working-dir' => '/home/foo/projects',
 		], $req);
 	}
 
@@ -156,6 +157,7 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 		$this->assertOptions([
 			'command' => 'run',
 			'trace' => false,
+			'working-dir' => '/home/foo/projects',
 		], $req);
 
 		$sign = new OptionSignature();
@@ -171,6 +173,63 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 			'age' => 45,
 			'name' => 'Martin',
 			'trace' => false,
+			'working-dir' => '/home/foo/projects',
+		], $req);
+	}
+
+
+
+	function testWorkingDir()
+	{
+		$req = $this->getCommandParser()->parse([
+			'argv' => [ "samples/a/src/app", 'run', "-a", "45", "Martin", '--working-dir', '/temp', ],
+			'argc' => 5,
+			'_SERVER' => [
+				'PWD' => '/home/foo/projects',
+			],
+		]);
+
+		$sign = new OptionSignature();
+		$sign->addArgument('name|n', $sign::TYPE_TEXT, 'Jméno koho pozdravím.');
+		$sign->addArgument('age|a', $sign::TYPE_INT, 'Věk koho pozdravím.');
+		$req->applyRules($sign);
+
+		$this->assertFalse($req->isMissingRules(), 'Vše zpracováno.');
+
+		$this->assertOptions([
+			'command' => 'run',
+			'age' => 45,
+			'name' => 'Martin',
+			'trace' => false,
+			'working-dir' => '/temp',
+		], $req);
+	}
+
+
+
+	function testWorkingDirShort()
+	{
+		$req = $this->getCommandParser()->parse([
+			'argv' => [ "samples/a/src/app", 'run', "-a", "45", "Martin", '-d', '/temp', ],
+			'argc' => 5,
+			'_SERVER' => [
+				'PWD' => '/home/foo/projects',
+			],
+		]);
+
+		$sign = new OptionSignature();
+		$sign->addArgument('name|n', $sign::TYPE_TEXT, 'Jméno koho pozdravím.');
+		$sign->addArgument('age|a', $sign::TYPE_INT, 'Věk koho pozdravím.');
+		$req->applyRules($sign);
+
+		$this->assertFalse($req->isMissingRules(), 'Vše zpracováno.');
+
+		$this->assertOptions([
+			'command' => 'run',
+			'age' => 45,
+			'name' => 'Martin',
+			'trace' => false,
+			'working-dir' => '/temp',
 		], $req);
 	}
 
@@ -237,6 +296,7 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 			'age' => 45,
 			'name' => 'Martin',
 			'trace' => false,
+			'working-dir' => '/home/foo/projects',
 		], $req);
 	}
 
@@ -263,6 +323,7 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 			'age' => 55, // [45, 55,],
 			'name' => 'Martin',
 			'trace' => false,
+			'working-dir' => '/home/foo/projects',
 		], $req);
 	}
 
@@ -289,6 +350,7 @@ class RequestEnvParserTest extends PHPUnit_Framework_TestCase
 			'age' => 45,
 			'name' => 'Martin',
 			'trace' => false,
+			'working-dir' => '/home/foo/projects',
 		], $req);
 	}
 
