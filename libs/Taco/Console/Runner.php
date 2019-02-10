@@ -48,8 +48,6 @@ class Runner
 
 			$parser = reset(self::assertEmpty($this->container->findByType(RequestParser::class), RequestParser::class));
 			$request = $parser->parse($env);
-//			$request->applyRules($this->buildCommandOptionSignature($defaultcommand));
-
 			$this->container->addInstance($request);
 
 			// Vybrat správný výstup podle argumentů.
@@ -130,20 +128,6 @@ class Runner
 			}
 		}
 		throw new LogicException("Command `" . $request->getOption('command') . "' not found.");
-	}
-
-
-
-	private function buildCommandOptionSignature($defaultcommand = null)
-	{
-		$sig = new OptionSignature();
-		if ($defaultcommand) {
-			$sig->addArgumentDefault('command', $sig::TYPE_TEXT, $defaultcommand, 'command');
-		}
-		else {
-			$sig->addArgument('command', $sig::TYPE_TEXT, 'command');
-		}
-		return $sig;
 	}
 
 
