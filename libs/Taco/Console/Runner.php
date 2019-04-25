@@ -87,7 +87,7 @@ class Runner
 						return (int) call_user_func_array($invoker, array_merge($deps, $args));
 					}
 					elseif (is_subclass_of($invoker, Command::class)) {
-						$invoker = $this->buildInvoker($invoker, $deps);
+						$invoker = Utils::newInstance($invoker, $deps);
 						return (int) $invoker->execute($request->getOptions());
 					}
 					else {
@@ -128,20 +128,6 @@ class Runner
 			}
 		}
 		throw new LogicException("Command `" . $request->getOption('command') . "' not found.");
-	}
-
-
-
-	private function buildInvoker($class, $deps)
-	{
-		if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
-			$inst = new $class(...$deps);
-		}
-		else {
-			$reflect = new \ReflectionClass($class);
-			$inst = $reflect->newInstanceArgs($deps);
-		}
-		return $inst;
 	}
 
 

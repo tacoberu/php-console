@@ -21,4 +21,18 @@ class Utils
 		return strtolower($class);
 	}
 
+
+
+	static function newInstance($class, array $deps)
+	{
+		if (version_compare(PHP_VERSION, '5.6.0', '>=')) {
+			$inst = new $class(...$deps);
+		}
+		else {
+			$reflect = new \ReflectionClass($class);
+			$inst = $reflect->newInstanceArgs($deps);
+		}
+		return $inst;
+	}
+
 }
