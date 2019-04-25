@@ -405,6 +405,63 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
 
 
+	function testWorkingDir()
+	{
+		$req = new Request('app', '/home');
+		$req->addRawData(array(
+			'--name=Trois',
+			'--age', '55'
+		));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('name', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('age', $sig::TYPE_INT, '...');
+		$sig->addFlag('trace', 'Display the error trace of application.');
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function(Request $r) {
+			return $r->getWorkingDir();
+		}, 'If specified, use the given directory as working directory.');
+		$req->applyRules($sig);
+
+		$this->assertEquals('/home', $req->getWorkingDir());
+		$this->assertEquals(new Options([
+			'name' => "Trois",
+			'age' => 55,
+			'trace' => False,
+			'working-dir' => '/home',
+		]), $req->getOptions());
+	}
+
+
+
+	function testChangeWorkingDir()
+	{
+		$req = new Request('app', '/home');
+		$req->addRawData(array(
+			'--name=Trois',
+			'--age', '55',
+			'--working-dir', '/var',
+		));
+
+		$sig = new OptionSignature();
+		$sig->addArgument('name', $sig::TYPE_TEXT, '...');
+		$sig->addArgument('age', $sig::TYPE_INT, '...');
+		$sig->addFlag('trace', 'Display the error trace of application.');
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function(Request $r) {
+			return $r->getWorkingDir();
+		}, 'If specified, use the given directory as working directory.');
+		$req->applyRules($sig);
+
+		$this->assertEquals('/home', $req->getWorkingDir());
+		$this->assertEquals(new Options([
+			'name' => "Trois",
+			'age' => 55,
+			'trace' => False,
+			'working-dir' => '/var',
+		]), $req->getOptions());
+	}
+
+
+
 	// -- PRIVATE ------------------------------------------------------
 
 
