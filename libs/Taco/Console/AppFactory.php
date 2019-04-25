@@ -21,11 +21,17 @@ class AppFactory
 	private $container;
 
 
-	static function create($version, $appname, $appdescription, $x, array $authors)
+	static function create($version, $appname, $appdescription, $_, array $authors)
 	{
-		$container = new StaticContainer($version, $appname, $appdescription, null, array_map(function($x) {
-			return Author::fromString($x);
-		}, $authors));
+		$container = new StaticContainer();
+		$container->addInstance(Version::fromString($version));
+		$container->addInstance(new AppInfo($appname, $appdescription, Null));
+		if ($authors) {
+			foreach ($authors as $author) {
+				$container->addInstance(Author::fromString($author));
+			}
+		}
+
 		$container->addInstance(new HumanOutput(new Stream()));
 		$container->addInstance(new XmlOutput(new Stream()));
 		$container->addInstance(RequestEnvParser::createCommanded('help'));

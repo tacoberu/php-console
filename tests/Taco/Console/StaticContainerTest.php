@@ -19,7 +19,17 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 
 	function testEmpty()
 	{
-		$container = new StaticContainer('0.0-1', 'App', 'Empty container...');
+		$container = new StaticContainer();
+		$this->assertEquals([], $container->findByType(Version::class));
+		$this->assertCount(0, $container->findByType(Command::class));
+	}
+
+
+
+	function testTypical()
+	{
+		$container = new StaticContainer();
+		$container->addInstance(new Version(0,0,1));
 		$this->assertEquals([new Version(0,0,1)], $container->findByType(Version::class));
 		$this->assertCount(0, $container->findByType(Command::class));
 	}
@@ -28,7 +38,7 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 
 	function testOutput()
 	{
-		$container = new StaticContainer('0.0-1', 'App', 'Container with output...');
+		$container = new StaticContainer();
 		$this->assertCount(0, $container->findByType(Output::class));
 		$container->addInstance(new HumanOutput(new Stream));
 		$this->assertCount(1, $container->findByType(Output::class));
@@ -38,7 +48,7 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 
 	function testManyOutputs()
 	{
-		$container = new StaticContainer('0.0-1', 'App', 'Container with output...');
+		$container = new StaticContainer();
 		$container->addInstance(new HumanOutput(new Stream));
 		$container->addInstance(new XmlOutput($this->getMockStream()));
 		$this->assertCount(2, $container->findByType(Output::class));
@@ -48,7 +58,7 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 
 	function testCommand()
 	{
-		$container = new StaticContainer('0.0-1', 'App', 'Container with hand added command...');
+		$container = new StaticContainer();
 		$this->assertCount(0, $container->findByType(Command::class));
 
 		$orig = new DescribedCommand('version', "Show program's version number and exit.",
@@ -70,7 +80,7 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 
 	function testCommands()
 	{
-		$container = new StaticContainer('0.0-1', 'App', 'Container with hand added command...');
+		$container = new StaticContainer();
 		$this->assertCount(0, $container->findByType(Command::class));
 
 		$orig = new DescribedCommand('version', "Show program's version number and exit.",
@@ -115,7 +125,8 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 
 	function testCheckTrue()
 	{
-		$container = new StaticContainer('0.0-1', 'App', 'Container with hand added command...');
+		$container = new StaticContainer();
+		$container->addInstance(new Version(0,0,1));
 		$orig = new DescribedCommand('version', "Show program's version number and exit.",
 					[Output::class, Version::class],
 					[],
@@ -131,7 +142,8 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 
 	function testCheckFalse()
 	{
-		$container = new StaticContainer('0.0-1', 'App', 'Container with hand added command...');
+		$container = new StaticContainer();
+		$container->addInstance(new Version(0,0,1));
 		$orig = new DescribedCommand('version', "Show program's version number and exit.",
 					[Output::class, Version::class],
 					[],
@@ -143,6 +155,7 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 			'Taco\Console\Command:0' => ['Taco\Console\Output']
 		], $container->check());
 	}
+
 
 
 	private function getMockStream()

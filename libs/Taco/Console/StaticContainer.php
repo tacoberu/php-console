@@ -29,24 +29,6 @@ class StaticContainer implements Container
 	 */
 	private $resolvers = [];
 
-	/**
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 */
-	function __construct($version, $name, $description, $epilog = Null, array $authors = Null)
-	{
-		$this->addInstance(Version::fromString($version));
-		$this->addInstance(new AppInfo($name, $description, $epilog));
-		if ($authors) {
-			foreach ($authors as $author) {
-				$this->addInstance($author);
-			}
-		}
-	}
-
-
 
 	/**
 	 * Přidat službu, která bude dodávat implementace na požádání.
