@@ -69,6 +69,12 @@ class Runner
 			unset($args['command']);
 			unset($args['output']);
 
+			$orig = getcwd();
+			if (isset($args['working-dir'])) {
+				chdir($args['working-dir']);
+				unset($args['working-dir']);
+			}
+
 			$deps = [];
 			foreach ($command->getDepends() as $type) {
 				switch($type) {
