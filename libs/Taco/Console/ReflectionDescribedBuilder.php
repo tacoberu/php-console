@@ -75,6 +75,9 @@ class ReflectionDescribedBuilder
 					case 'optional':
 						$ret->options[] = (object) array_combine(['type', 'validation', 'name', 'description', 'default'], $par);
 						break;
+					case 'option':
+						$ret->options[] = (object) array_combine(['type', 'validation', 'name', 'description', 'default'], $par);
+						break;
 					case 'flag':
 						$ret->options[] = (object) array_combine(['type', 'name', 'description'], $par);
 						break;
@@ -107,6 +110,9 @@ class ReflectionDescribedBuilder
 		}
 		if (substr($src, 0, 9) == '@optional') {
 			return array_merge(['optional'], self::assertEmpty(json_decode('[' . substr($src, 10, -1) . ']'), substr($src, 10, -1)));
+		}
+		if (substr($src, 0, 7) == '@option') {
+			return array_merge(['option'], self::assertEmpty(json_decode('[' . substr($src, 8, -1) . ']'), substr($src, 8, -1)));
 		}
 		if (substr($src, 0, 5) == '@flag') {
 			return array_merge(['flag'], self::assertEmpty(json_decode('[' . substr($src, 6, -1) . ']'), substr($src, 6, -1)));

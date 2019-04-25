@@ -59,6 +59,9 @@ class DescribedCommand implements Describe
 				case 'optional':
 					$this->signature->addArgumentDefault($def->name, TypeUtils::parseType($def->validation), $def->default, $def->description);
 					break;
+				case 'option':
+					$this->signature->addOption($def->name, TypeUtils::parseType($def->validation), $def->default, $def->description);
+					break;
 				case 'flag':
 					$this->signature->addFlag($def->name, $def->description);
 					break;

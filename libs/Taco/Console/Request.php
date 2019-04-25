@@ -129,7 +129,7 @@ class Request
 						$values = reset($values);
 					}
 					else if ($opt->getValence() == 0) {
-						$values = $opt->getDefaultValue();
+						$values = $opt->getDefaultValue($this);
 					}
 					try {
 						$this->args[$opt->getName()] = $opt->parse($values);
