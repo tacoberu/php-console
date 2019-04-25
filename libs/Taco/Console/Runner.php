@@ -8,7 +8,8 @@ namespace Taco\Console;
 
 
 use Exception,
-	LogicException;
+	LogicException,
+	RuntimeException;
 
 
 /**
@@ -66,6 +67,9 @@ class Runner
 			$request->applyRules($command->getOptionSignature());
 
 			$args = $request->getOptions()->asArray();
+			if ($command->getMetaInfo()->name !== $args['command']) {
+				throw new RuntimeException('The statement arguments must be after the statement.');
+			}
 			unset($args['command']);
 			unset($args['output']);
 
