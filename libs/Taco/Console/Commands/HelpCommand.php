@@ -131,7 +131,7 @@ class HelpCommand implements Command
 		return ['--' . $opt->getName(), sprintf("%-6s %s%s",
 				'[' . $opt->getType() . ']',
 				$opt->getDescription(),
-				self::formatDefaultValue($opt, $request)
+				self::formatCurrentValue($opt, $request)
 				)];
 	}
 
@@ -144,6 +144,30 @@ class HelpCommand implements Command
 	{
 		if ($val = $opt->getDefaultValue($request)) {
 			return " <fg=yellow>[default: " . self::escape($val, $opt->getType()) . "]</>";
+		}
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	private static function formatCurrentValue(OptionItem $opt, Request $request)
+	{
+		if ($val = $opt->getValueFrom($request)) {
+			return " <fg=yellow>[current: " . self::escape($val, $opt->getType()) . "]</>";
+		}
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	private static function formatDefaultValue2(OptionItem $opt, Request $request)
+	{
+		if ($val = $opt->getValueFrom($request)) {
+			return "<fg=yellow>" . trim(self::escape($val, $opt->getType()), '"') . "</>";
 		}
 	}
 

@@ -147,7 +147,7 @@ abstract class OptionItem
 
 
 
-	function getValue(Request $r)
+	function getValueFrom(Request $r)
 	{
 		if ($r->hasOption($this->getName())) {
 			return $r->getOption($this->getName());
