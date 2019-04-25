@@ -38,7 +38,7 @@ class Runner
 	 * zpracovat nakonfigurovanej parser, viz: Container::getParser().
 	 * @param array
 	 */
-	function run(array $env, $defaultcommand = 'help')
+	function run(array $env)
 	{
 		try {
 			$outputs = self::assertEmpty($this->container->findByType(Output::class), Output::class);

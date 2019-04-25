@@ -55,6 +55,16 @@ class RequestEnvParser implements RequestParser
 
 
 	/**
+	 * @inter
+	 */
+	function getSignature()
+	{
+		return $this->signature;
+	}
+
+
+
+	/**
 	 * @param array $env
 	 * @return Request
 	 */
