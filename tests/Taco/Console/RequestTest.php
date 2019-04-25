@@ -405,6 +405,63 @@ class RequestTest extends PHPUnit_Framework_TestCase
 
 
 
+	function testBug001()
+	{
+		$req = new Request('app', '/home');
+		$req->addRawData(array(
+			'-d',
+			'samples/',
+			'repos',
+		));
+
+		$sig = new OptionSignature();
+		$sig->addArgumentDefault('command', $sig::TYPE_TEXT, 'help', 'The command name');
+		$sig->addFlag('trace', 'Display the error trace of application.');
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function(Request $r) {
+			return $r->getWorkingDir();
+		}, 'If specified, use the given directory as working directory.');
+
+		$req->applyRules($sig);
+
+		$this->assertEquals(new Options([
+			'working-dir' => "samples/",
+			'command' => "repos",
+			'trace' => false,
+		]), $req->getOptions());
+	}
+
+
+
+	function testBug002()
+	{
+		$req = new Request('app', '/home');
+		$req->addRawData(array(
+			'-d',
+			'samples/',
+			'--trace',
+			'repos',
+			'-f',
+			'runall.hockej',
+		));
+
+		$sig = new OptionSignature();
+		$sig->addArgumentDefault('command', $sig::TYPE_TEXT, 'help', 'The command name');
+		$sig->addFlag('trace', 'Display the error trace of application.');
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function(Request $r) {
+			return $r->getWorkingDir();
+		}, 'If specified, use the given directory as working directory.');
+
+		$req->applyRules($sig);
+
+		$this->assertEquals(new Options([
+			'working-dir' => "samples/",
+			'command' => "repos",
+			'trace' => true,
+		]), $req->getOptions());
+	}
+
+
+
 	function testWorkingDir()
 	{
 		$req = new Request('app', '/home');
