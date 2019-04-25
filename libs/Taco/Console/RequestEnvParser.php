@@ -19,7 +19,7 @@ class RequestEnvParser implements RequestParser
 	{
 		$sig = new OptionSignature();
 		$sig->addFlag('trace', 'Display the error trace of application.');
-		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function($r) {
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function(Request $r) {
 			return $r->getWorkingDir();
 		}, 'If specified, use the given directory as working directory.');
 
@@ -38,7 +38,7 @@ class RequestEnvParser implements RequestParser
 			$sig->addArgument('command', $sig::TYPE_TEXT, 'The command name');
 		}
 		$sig->addFlag('trace', 'Display the error trace of application.');
-		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function($r) {
+		$sig->addOption('working-dir|d', $sig::TYPE_TEXT, function(Request $r) {
 			return $r->getWorkingDir();
 		}, 'If specified, use the given directory as working directory.');
 

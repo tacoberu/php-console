@@ -221,6 +221,18 @@ class Request
 
 	/**
 	 * @param string
+	 * @return bool
+	 */
+	function hasOption($name)
+	{
+		TypeUtils::assert($name, 'string:1..');
+		return in_array($name, $this->signature->getOptionNames(), True);
+	}
+
+
+
+	/**
+	 * @param string
 	 * @return mixed
 	 */
 	function getOption($name)

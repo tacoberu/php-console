@@ -147,6 +147,16 @@ abstract class OptionItem
 
 
 
+	function getValue(Request $r)
+	{
+		if ($r->hasOption($this->getName())) {
+			return $r->getOption($this->getName());
+		}
+		return $this->getDefaultValue($r);
+	}
+
+
+
 	/**
 	 * Zpracování vstupní hodnoty na sanitovanou. Případně to řve, když je blbost.
 	 */
