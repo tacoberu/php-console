@@ -35,4 +35,11 @@ class Utils
 		return $inst;
 	}
 
+
+
+	static function first(array $xs)
+	{
+		return reset($xs);
+	}
+
 }

@@ -114,7 +114,7 @@ class DescribedCommand implements Describe
 	function invoke($container, array $args = [])
 	{
 		foreach ($this->depends as $type) {
-			$deps[] = reset(self::assertEmpty($container->findByType($type), $type));
+			$deps[] = Utils::first(self::assertEmpty($container->findByType($type), $type));
 		}
 		call_user_func_array($this->invoker, array_merge($deps, $args));
 	}

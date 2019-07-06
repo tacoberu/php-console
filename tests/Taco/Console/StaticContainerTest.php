@@ -71,7 +71,7 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 		$container->addInstance(new HumanOutput(new Stream));
 
 		$this->assertCount(1, $container->findByType(Command::class));
-		$fn = reset($container->findByType(Command::class));
+		$fn = Utils::first($container->findByType(Command::class));
 		$this->assertInstanceOf(DescribedCommand::class, $fn);
 		$this->assertSame($orig, $fn);
 	}
@@ -99,7 +99,7 @@ class StaticContainerTest extends PHPUnit_Framework_TestCase
 		$container->addInstance(new HumanOutput(new Stream));
 
 		$this->assertCount(2, $container->findByType(Command::class));
-		$fn = reset($container->findByType(Command::class));
+		$fn = Utils::first($container->findByType(Command::class));
 		$this->assertInstanceOf(DescribedCommand::class, $fn);
 		$this->assertSame($orig, $fn);
 	}

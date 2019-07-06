@@ -49,7 +49,7 @@ class ReflectionDescribedBuilder
 			'description' => '',
 			'options' => [],
 		];
-		$xs = split("\n", $src);
+		$xs = explode("\n", $src);
 		$xs = array_slice($xs, 1, -1);
 		$xs = array_map(function($x) {
 			$prefix = substr($x, 0, 3);

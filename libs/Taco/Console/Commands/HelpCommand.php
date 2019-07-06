@@ -43,9 +43,9 @@ class HelpCommand implements Command
 	function execute(Options $opts)
 	{
 		// Hlavička
-		$appinfo = reset($this->container->findByType(AppInfo::class));
-		$version = reset($this->container->findByType(Version::class));
-		$request = reset($this->container->findByType(Request::class));
+		$appinfo = Utils::first($this->container->findByType(AppInfo::class));
+		$version = Utils::first($this->container->findByType(Version::class));
+		$request = Utils::first($this->container->findByType(Request::class));
 		$this->output->notice(strtr("<fg=green>%{appname}</fg> version: <fg=yellow>%{version}</>\n",
 			[
 				'%{appname}' => $appinfo->getName(),

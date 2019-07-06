@@ -72,8 +72,7 @@ class AppFactory
 		$container->addInstance(ReflectionDescribedBuilder::buildCommand(HelpCommand::class));
 		$container->addInstance(ReflectionDescribedBuilder::buildCommand(ListCommand::class));
 
-		$isnt = $container->findByType(RequestParser::class);
-		$isnt = reset($isnt);
+		$isnt = Utils::first($container->findByType(RequestParser::class));
 		$isnt->getSignature()->getOption('command')->setDefaultValue($defaultcommand);
 
 		$runner = new Runner($container);

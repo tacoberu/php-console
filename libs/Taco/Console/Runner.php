@@ -45,9 +45,10 @@ class Runner
 			$outputs = self::assertEmpty($this->container->findByType(Output::class), Output::class);
 
 			// Jako nouzovka nám stačí libovolný výstup.
-			$output = reset($outputs);
+			$output = Utils::first($outputs);
 
-			$parser = reset(self::assertEmpty($this->container->findByType(RequestParser::class), RequestParser::class));
+			$parser = self::assertEmpty($this->container->findByType(RequestParser::class), RequestParser::class);
+			$parser = Utils::first($parser);
 			$request = $parser->parse($env);
 			$this->container->addInstance($request);
 
@@ -67,6 +68,7 @@ class Runner
 			$request->applyRules($command->getOptionSignature());
 
 			$args = $request->getOptions()->asArray();
+
 			if ($command->getMetaInfo()->name !== $args['command']) {
 				throw new RuntimeException('The statement arguments must be after the statement.');
 			}
@@ -86,7 +88,7 @@ class Runner
 						$deps[] = $output;
 						break;
 					default:
-						$deps[] = reset(self::assertEmpty($this->container->findByType($type), $type));
+						$deps[] = Utils::first(self::assertEmpty($this->container->findByType($type), $type));
 				}
 			}
 
