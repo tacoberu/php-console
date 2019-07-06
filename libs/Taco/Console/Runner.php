@@ -64,6 +64,17 @@ class Runner
 				}
 			}
 
+			if ($sgn = $this->getOptionSignature()) {
+				$request->applyRules($sgn);
+			}
+
+			// Zohlednění pracovního adresáře.
+			$args = $request->getOptions()->asArray();
+			$orig = getcwd();
+			if (isset($args['working-dir'])) {
+				chdir($args['working-dir']);
+			}
+
 			$command = $this->resolveCommand($request);
 			$request->applyRules($command->getOptionSignature());
 
@@ -74,13 +85,9 @@ class Runner
 			}
 			unset($args['command']);
 			unset($args['output']);
+			unset($args['working-dir']);
 
-			$orig = getcwd();
-			if (isset($args['working-dir'])) {
-				chdir($args['working-dir']);
-				unset($args['working-dir']);
-			}
-
+			// Závislosti? @Nejasné.
 			$deps = [];
 			foreach ($command->getDepends() as $type) {
 				switch($type) {
@@ -92,24 +99,12 @@ class Runner
 				}
 			}
 
-			switch (True) {
-				case $command instanceof DescribedCommand:
-					$invoker = $command->getInvoker();
-					if (is_callable($invoker)) {
-						return (int) call_user_func_array($invoker, array_merge($deps, $args));
-					}
-					elseif (is_subclass_of($invoker, Command::class)) {
-						$invoker = Utils::newInstance($invoker, $deps);
-						return (int) $invoker->execute($request->getOptions());
-					}
-					else {
-						throw new LogicException("Unsupported type of invoker: `" . $invoker . "'.");
-					}
-				default:
-					throw new LogicException("Unsupported type of command: `" . get_class($command) . "'.");
-			}
+			$val = $this->invokeCommand($command, $deps, $args, $request);
+			chdir($orig);
+			return $val;
 		}
 		catch (Exception $e) {
+			chdir($orig);
 			if (isset($output)) {
 				$output->error('<bg=red>' . $e->getMessage() . '</>');
 			}
@@ -128,6 +123,28 @@ class Runner
 
 
 	// -- PRIVATE ------------------------------------------------------
+
+
+
+	private function invokeCommand($command, $deps, $args, $request)
+	{
+		switch (True) {
+			case $command instanceof DescribedCommand:
+				$invoker = $command->getInvoker();
+				if (is_callable($invoker)) {
+					return (int) call_user_func_array($invoker, array_merge($deps, $args));
+				}
+				elseif (is_subclass_of($invoker, Command::class)) {
+					$invoker = Utils::newInstance($invoker, $deps);
+					return (int) $invoker->execute($request->getOptions());
+				}
+				else {
+					throw new LogicException("Unsupported type of invoker: `" . $invoker . "'.");
+				}
+			default:
+				throw new LogicException("Unsupported type of command: `" . get_class($command) . "'.");
+		}
+	}
 
 
 
@@ -152,6 +169,15 @@ class Runner
 			$xs[] = Utils::parseClassName(get_class($x), 'Output');
 		}
 		$sgn->addOption('output', new TypeEnum($xs), reset($xs), 'The output format');
+		return $sgn;
+	}
+
+
+
+	private function getOptionSignature()
+	{
+		$sgn = new OptionSignature();
+		$sgn->addArgumentDefault('file|f', 'text', "build.hockej", 'File with tasks');
 		return $sgn;
 	}
 

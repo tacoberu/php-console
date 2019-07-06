@@ -70,7 +70,7 @@ class AppFactory
 
 		$container->addInstance(ReflectionDescribedBuilder::buildCommand(VersionCommand::class));
 		$container->addInstance(ReflectionDescribedBuilder::buildCommand(HelpCommand::class));
-		$container->addInstance(ReflectionDescribedBuilder::buildCommand(ListCommand::class));
+		//~ $container->addInstance(ReflectionDescribedBuilder::buildCommand(ListCommand::class));
 
 		$isnt = Utils::first($container->findByType(RequestParser::class));
 		$isnt->getSignature()->getOption('command')->setDefaultValue($defaultcommand);
