@@ -11,12 +11,3 @@ Concurent for Symfony/Console.
 * Build-in support many output formats: colored, ansi, xml, json.
 * Parsing input. Making output format (list, dict, table).
 * Build-in default command: help, version.
-
-
-# Examples
-
-Minimal application:
-
-`samples/1.greating/app`
-
-
